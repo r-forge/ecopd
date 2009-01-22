@@ -14,7 +14,7 @@ ecophylo <- function (communityID, species, abundance, tree) {
     vec <- community$abundance
     names(vec) <- community$species
     return(vec)
-    }, SIMPLIFY=FALSE)
+    }, simplify=FALSE)
 
   obj <- list(data=spAbundances, tree=tree, missing=missing)
   class(obj) <- "ecophylo"

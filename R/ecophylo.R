@@ -8,7 +8,8 @@ phylo4com <- function(communityID, species, abundance, tree) {
     missing <- NULL
   } else {
     missing <- setdiff(species, tree@tip.label)
-    error("one or more species not found in tree")
+    stop("one or more species not found in tree:\n\t", paste(missing,
+      collapse=", "))
   }
 
   communities <- split(data.frame(species, abundance), 

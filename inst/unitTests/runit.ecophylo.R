@@ -31,6 +31,14 @@ weed.tree <- read.tree(text="(((Taraxacum_officinale:0.2601451047,(Silybum_maria
 #
 # --- Test community-level ecoPD functions ---
 #
+
+test.phylo4com <- function() {
+  # Test for error when any supplied taxa are missing from supplied tree
+  BADTAXA <- weed.com$taxa
+  levels(BADTAXA) <- paste("Unknown", 1:5, sep="")
+  checkException(phylo4com(weed.com$plot, BADTAXA, weed.com$cover,
+    phylo4d(weed.tree)))
+}
  
 test.pd.trad <- function() {
   DEACTIVATED("no longer calculating pd for ape-based ecophylo objects")

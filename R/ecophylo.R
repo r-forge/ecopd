@@ -1,42 +1,31 @@
-# ecophylo object constructor
-ecophylo <- function (communityID, species, abundance, tree) {
+phylo4com <- function(communityID, species, abundance, tree) {
 
-  if (all(species %in% tree$tip.label)) {
+  # need to fix this. my subset.phylo function automatically dropped any
+  # species not found in tree, but phylobase subset returns an error.
+  # thus, need to first remove any such species (with warning?) before
+  # calling the subset method.
+  if (all(species %in% tree@tip.label)) {
     missing <- NULL
   } else {
-    missing <- setdiff(species, tree$tip.label)
+    missing <- setdiff(species, tree@tip.label)
+    error("one or more species not found in tree")
   }
 
   communities <- split(data.frame(species, abundance), 
     factor(communityID, unique(as.character(communityID))))
   
-  spAbundances <- sapply(communities, function(community) {
-    vec <- community$abundance
-    names(vec) <- community$species
-    return(vec)
-    }, simplify=FALSE)
+  subtrees <- lapply(communities, function(community) {
+    cdata <- with(community, data.frame(abundance, row.names=species))
+    subtree <- phylobase::subset(tree, tips.include=community$species)
+    tdata(subtree) <- cdata
+    return(subtree)
+  })
 
-  obj <- list(data=spAbundances, tree=tree, missing=missing)
-  class(obj) <- "ecophylo"
+  return(subtrees)
 
-  return(obj)
+  # alternative conceptualization...
+  #result <- list(tree=tree, community=subtrees)
+  #class(result) <- "phylo4com"
+  #return(result)
 
-}
-
-# ecophylo print method
-print.ecophylo <- function(x, ...) {
-  cat("\n--- Phylogeny ---\n")
-  print(x$tree)
-  cat("\n--- Ecological data ---\n")
-  ncom <- length(x$data)
-  nspp <- length(unique(unlist(sapply(x$data, names))))
-  cat(paste(nspp, "total species across", ncom, "communities\n"))
-  cat("\n")
-  if (!is.null(x$missing)) {
-    cat("Species in data but not in tree:\n")
-    writeLines(strwrap(paste(x$missing, collapse = ", "), indent=4,
-    exdent=8))
-  }
-  cat("\n")
-  return(x)
 }

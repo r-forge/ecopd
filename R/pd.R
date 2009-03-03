@@ -1,18 +1,42 @@
 # basic pd calculation
 pd <- function(tree) {
-  sum(tree$edge.length)
+  # removes root edge if it exists; at last check, phylobase included
+  # the root edge in the edgeLength calculation, but we don't want it
+  tot.length <- sum(edgeLength(tree))
+  root.node <- rootNode(tree)
+  if (!is.na(root.node)) {
+    root.length <- edgeLength(tree, root.node)
+    tot.length <- tot.length - root.length
+  }
+  return(tot.length)
 }
 
 # lookup function for minimum tip length
 getMinTL <- function(tree, genera) {
 
+  if (missing(genera)) stop("must supply vector of genera")
+
+  lengthsTipToRoot <- function(tree) {
+    # Workaround problem in phylobase -- need to figure out if this is
+    # really the right thing to do...
+    if (!is.na(tree@root.edge)) {
+      warning("omitting root edge")
+      is.na(tree@root.edge) <- TRUE
+    }
+    sapply(phylobase::labels(tree), function(x) {
+      sumEdgeLength(tree, ancestors(tree, x, "ALL"))
+    })
+  }
+
   # Families, Supertree, and LookupTL are all system data built into
   # the package
 
   # Supplied tree must be ultrametric
-  if (!is.ultrametric(tree)) {
-    stop(deparse(substitute(tree)), " is not ultrametric")
-  }
+# Not sure this is necessary?? Removing for now...
+#  tree.phy <- suppressWarnings(as(foo, "phylo"))
+#  if (!is.ultrametric(tree.phy)) {
+#    stop(deparse(substitute(tree)), " is not ultrametric")
+#  }
 
   # TODO: if genus not in Families vector, need to give warning.
   families <- Families[genera]
@@ -31,7 +55,7 @@ getMinTL <- function(tree, genera) {
   # supertree, they are simply ignored
   subsupertree <- subset(Supertree, na.omit(familiesInSupertree))
   subsupertree.maxLength <- max(cophenetic(subsupertree))/2
-  tree.maxLength <- max(cophenetic(tree))/2
+  tree.maxLength <- max(lengthsTipToRoot(tree))
 
   tableTL <- LookupTL[familiesInSupertree, "minTL"]
 
@@ -48,7 +72,7 @@ getMinTL <- function(tree, genera) {
   }
 
   lookupTL <- tableTL * (tree.maxLength / subsupertree.maxLength)
-  actualTL <- tipLengths(tree)
+  actualTL <- tipLength(tree)
   minTL <- ifelse(lookupTL < actualTL, lookupTL, actualTL)
 
   return(minTL)
@@ -68,12 +92,14 @@ weightByAbund <- function(tree, method=c("polytomy", "yule")) {
     stop("tree contains no minTL information")
   }
 
-  tipRowID <- which(tree$edge[, 2] <= Ntip(tree))
-  tipLen <- tree$edge.length[tipRowID]
-  tipID <- tree$edge[tipRowID,2]
+  n <- abundance(tree)
+  minLength <- minTL(tree)
 
-  n <- abundance(tree)[tipID]
-  minLength <- minTL(tree)[tipID]
+  tipLen <- ancestralEdgeLength(foo, getnodes(foo,
+    names(abundance(foo))))
+  # Longer form above ensures consistent ordering, but given phylo4
+  # rules it might be sufficient to use:
+  # tipLen <- ancestralEdgeLength(foo, nodes(foo, "tip"))
  
   # Test statement:
   if (!identical(names(n), names(minLength))) {
@@ -81,12 +107,18 @@ weightByAbund <- function(tree, method=c("polytomy", "yule")) {
   }
 
   if (method=="polytomy") {
-    tree$edge.length[tipRowID] <- tipLen + (n-1) * minLength
+    newLength <- tipLen + (n-1) * minLength
   } else if (method=="yule") {
     C <- 0.57722
-    tree$edge.length[tipRowID] <- tipLen - minLength +
+    newLength <- tipLen - minLength +
       (minLength * (n-1) / (log(n) + C-1))
   }
+
+  # Note that this is (unfortunately) tightly coupled to the
+  # implementation of phylo4 objects -- an assignment method would be
+  # better
+  tree@edge.length[match(nodes(tree, "tip"), edges(tree)[,2])] <-
+    newLength
 
   return(tree)
 
@@ -100,75 +132,4 @@ commPD <- function(tree, method=c("traditional", "polytomy", "yule")) {
   } else {
     pd(weightByAbund(tree, method))
   } 
-}
-
-ecoPD <- function (ecophylo, method=c("traditional", "polytomy",
-  "yule"), use.supertree=TRUE, nsims=0) {
-
-  method <- match.arg(method)
-
-  if (use.supertree) {
-    #message("Looking up minTL values from supertree")
-    minTL(ecophylo$tree) <- getMinTL(ecophylo$tree, genera(ecophylo$tree))
-  } else {
-    if (is.null(minTL(ecophylo$tree))) {
-      stop("ecophylo tree must have minTL values if use.supertree=FALSE")
-    }
-  }
-
-  # define pd function to apply to each community
-  pdfunc <- function(sub.tree, method, nsims) {
-      pd <- commPD(sub.tree, method=method)
-      if (nsims>0) {
-        pd.sims <- replicate(nsims, {
-          abundance(sub.tree) <- sample(abundance(sub.tree))
-          commPD(sub.tree, method=method)
-        })
-        pd.quants <- quantile(pd.sims, c(0.5, 0.025, 0.975))
-        names(pd.quants) <- c("median", "0.025", "0.975")
-        pd <- c(pd.obs=pd, mean = mean(pd.sims), pd.quants)
-      }
-      pd
-    }
-
-  answer <- doByCommunity(ecophylo, pdfunc, simplify=TRUE,
-    method=method, nsims=nsims)
-  attr(answer, "method") <- method
-  return(answer)
-
-}
-
-# calculate PD values for a whole set of communities
-ecoPD.old <- function (ecophylo, method, use.supertree=TRUE, nsims=0) {
-
-  communities <- ecophylo$data
-  tree <- ecophylo$tree
-  if (use.supertree) {
-    #message("Looking up minTL values from supertree")
-    minTL(tree) <- getMinTL(tree, genera(tree))
-  } else {
-    if (is.null(minTL(tree))) {
-      stop("ecophylo tree must have minTL values if use.supertree=FALSE")
-    }
-  }
-
-  PD <- lapply(communities, function(community) {
-    sub.tree <- subset(tree, names(community), checkMissing=FALSE)
-    minTL(sub.tree) <- minTL(tree)[sub.tree$tip.label]
-    abundance(sub.tree) <- community[sub.tree$tip.label]
-    pd <- c(pd=commPD(sub.tree, method=method))
-    if (nsims>0) {
-      pd.sims <- replicate(nsims, {
-        abundance(sub.tree) <- sample(abundance(sub.tree))
-        commPD(sub.tree, method=method)
-      })
-      pd.quants <- quantile(pd.sims, c(0.5, 0.025, 0.975))
-      names(pd.quants) <- c("median", "0.025", "0.975")
-      pd <- c(pd, pd.mean = mean(pd.sims), pd.quants)
-    }
-    pd
-  })
-
-  return(data.frame(do.call("rbind", PD)))
-
 }

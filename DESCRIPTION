@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2008-09-03
 Author: Jim Regetz, Marc Cadotte, Jonathan Davies
 Maintainer: Jim Regetz <regetz@nceas.ucsb.edu>
-Depends: ape
+Depends: ape, phylobase
 Description: Does stuff
 License: TBD
 LazyLoad: yes

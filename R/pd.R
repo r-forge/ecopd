@@ -2,11 +2,12 @@
 pd <- function(tree) {
   # removes root edge if it exists; at last check, phylobase included
   # the root edge in the edgeLength calculation, but we don't want it
-  tot.length <- sum(edgeLength(tree))
   root.node <- rootNode(tree)
-  if (!is.na(root.node)) {
-    root.length <- edgeLength(tree, root.node)
-    tot.length <- tot.length - root.length
+  existsRoot <- !is.na(root.node)
+  if (existsRoot) {
+    tot.length <- sum(edgeLength(tree)[-root.node])
+  } else {
+    tot.length <- sum(edgeLength(tree))
   }
   return(tot.length)
 }

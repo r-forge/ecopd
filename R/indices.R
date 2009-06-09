@@ -31,14 +31,14 @@ IAC <- function(tree, abundance) {
 
   # Count number of lineages originating at each internal node (i.e.
   # number of splits)
-  nodeNames <- as.vector(nodeLabels(tree))
-  nSplits <- sapply(nodeNames, function(x) length(children(tree,
-    x)))
+  int.nodes <- nodes(tree, "internal")
+  nSplits <- sapply(int.nodes, function(x) length(children(tree, x)))
+  names(nSplits) <- int.nodes
 
   # For each tip, take the product of the number of splits across all of
   # its ancestral nodes
   denom <- sapply(phylobase::labels(tree), function(x)
-    prod(nSplits[names(ancestors(tree, x))]))
+    prod(nSplits[as.character(ancestors(tree, x))]))
 
 # This next line assumes 'abundance' column in phylo4d data
   abundance <- tdata(tree)$abundance
@@ -56,8 +56,8 @@ IAC <- function(tree, abundance) {
 ED <- function(tree) {
 # This function includes its own code for not counting root edge length.
 # Maybe this should maybe be done at a higher level?
-  nodes <- nodes(tree, which = "all", include.root = TRUE)
-  nv <- sapply(nodes, function(node) {
+  all.nodes <- nodes(tree, which = "all", include.root = TRUE)
+  nv <- sapply(all.nodes, function(node) {
     if (node != rootNode(tree)) {
       S <- length(descendants(tree, node, which = "tip"))
       ans <- as.vector(ancestralEdgeLength(tree, node)/S)
@@ -66,9 +66,10 @@ ED <- function(tree) {
       return(0.0)
     }
   })
+  names(nv) <- all.nodes
   tip.nodes <- nodes(tree, which = "tip")
-  EDI <- sapply(tip.nodes, function(n) sum(nv[names(ancestors(tree, n,
-    "ALL"))], na.rm = TRUE))
+  EDI <- sapply(tip.nodes, function(n)
+    sum(nv[as.character(ancestors(tree, n, "ALL"))], na.rm = TRUE))
   return(EDI)
 }
 

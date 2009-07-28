@@ -9,6 +9,7 @@ export(genera)
 export(getMinTL)
 export(pd)
 export(richness)
+export(simp.phy)
 export(siteBySpecies)
 export(weightByAbund)
 

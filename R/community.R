@@ -20,9 +20,8 @@ richness <- function(phylo4com) {
 simp.phy <- function(x, tr, phy=TRUE) {
 
   x <- as.matrix(x)
-  x <- x[, order(colnames(x))]
-  total <- apply(x, 1, sum)
-  x <- sweep(x, 1, total, "/")
+  x <- x[, order(colnames(x)), drop=FALSE]
+  x <- prop.table(x, 1)
     
   if (phy==TRUE){
     phy.mat <- cophenetic(tr)

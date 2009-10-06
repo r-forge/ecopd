@@ -1,17 +1,11 @@
-PAE <- function(tree, abundance) {
+PAE <- function(tree) {
 
   # Calculate PD
   PD <- pd(tree)
 
-  # Calculate lengths of terminal branches
+  # Extract tip lengths and abundances of those taxa
   TL <- tipLength(tree)
-
-  # Match abundances to tips based on terminal labels (won't be
-  # necessary if we incorporate abundances into the trait data frame
-  # properly)
-  #N <- abundance[names(TL)]
-# New approach, assumes 'abundance' column in phylo4d data
-  N <- tdata(tree)$abundance
+  N <- abundance(tree)
 
   # Calculate PAE
   numer <- PD + sum(TL * (N-1))
@@ -20,7 +14,7 @@ PAE <- function(tree, abundance) {
 
 }
 
-IAC <- function(tree, abundance) {
+IAC <- function(tree) {
 
   # Workaround for problem previously in phylobase -- need to figure out
   # if this has actually been "fixed"
@@ -40,8 +34,7 @@ IAC <- function(tree, abundance) {
   denom <- sapply(phylobase::labels(tree), function(x)
     prod(nSplits[as.character(ancestors(tree, x))]))
 
-# This next line assumes 'abundance' column in phylo4d data
-  abundance <- tdata(tree)$abundance
+  abundance <- abundance(tree)
 
   # Calculate expected number of individuals under null hypothesis of
   # equal allocation to each lineage at each (node) split 
@@ -117,8 +110,7 @@ AED <- function(tree) {
 
   # Create matrix containing number of individuals of each species
   # descending from each interior node
-# This next line assumes 'abundance' column in phylo4d data
-abundance <- tdata(tree)$abundance
+  abundance <- abundance(tree)
   dAbund <- apply(isDescendant, 1, function(x) ifelse(x, abundance[x],
     0))
 
@@ -135,13 +127,13 @@ abundance <- tdata(tree)$abundance
 HAED <- function(tree) {
   # Recast AED in terms of individuals
   AED <- AED(tree)
-  abundance <- tdata(tree)$abundance
+  abundance <- abundance(tree)
   scaledIndivAED <- rep(AED, abundance) / pd(tree)
   return(-sum(scaledIndivAED * log(scaledIndivAED)))
 }
 
 EAED <- function(tree) {
-  HAED(tree) / log(sum(tdata(tree)$abundance))
+  HAED(tree) / log(sum(abundance(tree)))
 }
 
 value <- function(tree) {

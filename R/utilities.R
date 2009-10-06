@@ -63,19 +63,15 @@ tipLength <- function(tree) {
 
 # abundance extractor
 abundance <- function(tree) {
-  abund <- tdata(tree)$abundance
-  names(abund) <- row.names(tdata(tree))
+  abund <- tipData(tree)$abundance
+  if (is.null(abund)) abund <- rep(NA_real_, nTips(tree))
+  names(abund) <- row.names(tipData(tree))
   return(abund)
 }
 
 # abundance assignment function
 `abundance<-` <- function(tree, value) {
-  if (!is.numeric(value)) {
-    stop("abundance values must be a numeric vector")
-  } else if (length(value)!=nrow(tdata(tree))) {
-    stop("number of abundance values must equal number of tips")
-  }
-  tree@tip.data <- replace(tree@tip.data, "abundance", value)
+  tipData(tree)$abundance <- value
   return(tree)
 }
 

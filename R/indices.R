@@ -52,7 +52,7 @@ ED <- function(tree) {
   all.nodes <- nodes(tree, which = "all", include.root = TRUE)
   nv <- sapply(all.nodes, function(node) {
     if (node != rootNode(tree)) {
-      S <- length(descendants(tree, node, which = "tip"))
+      S <- length(descendants(tree, node, type = "tips"))
       ans <- as.vector(ancestralEdgeLength(tree, node)/S)
       return(ans)
     } else {

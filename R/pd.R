@@ -24,7 +24,7 @@ getMinTL <- function(tree, genera) {
       warning("omitting root edge")
       is.na(tree@root.edge) <- TRUE
     }
-    sapply(phylobase::labels(tree), function(x) {
+    sapply(tipLabels(tree), function(x) {
       sumEdgeLength(tree, ancestors(tree, x, "ALL"))
     })
   }

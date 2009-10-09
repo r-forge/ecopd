@@ -31,7 +31,7 @@ IAC <- function(tree) {
 
   # For each tip, take the product of the number of splits across all of
   # its ancestral nodes
-  denom <- sapply(phylobase::labels(tree), function(x)
+  denom <- sapply(tipLabels(tree), function(x)
     prod(nSplits[as.character(ancestors(tree, x))]))
 
   abundance <- abundance(tree)
@@ -86,7 +86,7 @@ AED <- function(tree) {
 
   # Create logical matrix indicating which tips (in columns) are
   # descendants of each interior node (in rows)
-  #isDescendant <- sapply(phylobase::labels(tree), function(n) nodeLabels(tree) %in%
+  #isDescendant <- sapply(tipLabels(tree), function(n) nodeLabels(tree) %in%
   #  names(ancestors(tree, n)))
 
   # Row corresponding to the root node will have all TRUE values. We
@@ -96,7 +96,7 @@ AED <- function(tree) {
   # New way to do the above, using my node-finding function
 #  int.nodes <- nodesInternal(tree, include.root=FALSE)
   int.nodes <- nodes(tree, which="int", include.root=FALSE)
-  isDescendant <- sapply(phylobase::labels(tree), function(n) int.nodes %in%
+  isDescendant <- sapply(tipLabels(tree), function(n) int.nodes %in%
     ancestors(tree, n))
 
   # Create vector of edges on ancestral side of each interior node

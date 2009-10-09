@@ -57,7 +57,7 @@ ancestralEdgeLength <- function(tree, node=NULL) {
 # tip length extractor
 tipLength <- function(tree) {
   tip.length <- ancestralEdgeLength(tree, nodes(tree, which="tip"))
-  names(tip.length) <- phylobase::labels(tree)
+  names(tip.length) <- tipLabels(tree)
   return(tip.length)
 }
 
@@ -99,6 +99,6 @@ minTL <- function(tree) {
 # genera extractor
 genera <- function(tree) {
   #From taxa names in tree, remove "_" and species name after
-  gsub("_.*$", "", phylobase::labels(tree))
+  gsub("_.*$", "", tipLabels(tree))
 }
 

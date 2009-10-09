@@ -1,6 +1,6 @@
 # Generate site-by-species matrix
 siteBySpecies <- function(phylo4com) {
-  spp <- unique(unlist(lapply(phylo4com, phylobase::labels)))
+  spp <- unique(unlist(lapply(phylo4com, tipLabels)))
   sapply(phylo4com, function(x) {
     vec <- tdata(x)[spp, "abundance"]
     vec[is.na(vec)] <- 0

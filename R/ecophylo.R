@@ -1,25 +1,25 @@
-phylo4com <- function(communityID, species, abundance, tree) {
+phylo4com <- function(communityID, species, abundance, tree,
+  missing=c("warn", "OK", "fail")) {
 
-  # need to fix this. my subset.phylo function automatically dropped any
-  # species not found in tree, but phylobase subset returns an error.
-  # thus, need to first remove any such species (with warning?) before
-  # calling the subset method.
-  if (all(species %in% tree@tip.label)) {
-    missing <- NULL
-  } else {
-    missing <- setdiff(species, tree@tip.label)
-    stop("one or more species not found in tree:\n\t", paste(missing,
-      collapse=", "))
-  }
+  ## species should only ever match against tip *labels* (not node IDs)
+  species <- as.character(species)
 
-  communities <- split(data.frame(species, abundance), 
-    factor(communityID, unique(as.character(communityID))))
+  ## identify and exclude any species missing from tree
+#  tips <- getNode(tree, unique(species), type="tip", missing=missing)
+#  isInTree <- species %in% names(tips[!is.na(tips)])
+#  species <- species[isInTree]
+#  abundance <- abundance[isInTree]
+#  communityID <- communityID[isInTree]
+
+  communities <- split(data.frame(species, abundance,
+    stringsAsFactors=FALSE), factor(communityID,
+    unique(as.character(communityID))))
   
   subtrees <- lapply(communities, function(community) {
+    subtree <- subset(tree, tips.include=community$species)
     cdata <- with(community, data.frame(abundance, row.names=species))
-    subtree <- phylobase::subset(tree, tips.include=community$species)
-    tdata(subtree) <- cdata
-    return(subtree)
+    tipData(subtree, extra.data="OK") <- cdata
+    subtree
   })
 
   return(subtrees)

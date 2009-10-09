@@ -10,8 +10,8 @@ siteBySpecies <- function(phylo4com) {
 }
 
 # Calculate species richness
-richness <- function(phylo4com) {
-  sapply(phylo4com, function(x) nrow(tdata(x)))
+richness <- function(phylo4com, na.rm=FALSE) {
+  sapply(phylo4com, function(x) sum(abundance(x)>0, na.rm=na.rm))
 }
 
 # simpson's index with and without phylogenetic distances using

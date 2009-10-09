@@ -1,37 +1,29 @@
 \name{richness}
 \alias{richness}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{Calculate richness for each community}
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Returns the species richness of each community, i.e. the number of tip
+  taxa having positive abundance.
 }
 \usage{
-richness(ecophylo, onlyInTree = FALSE)
+richness(phylo4com, na.rm = FALSE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{ecophylo}{ ~~Describe \code{ecophylo} here~~ }
-  \item{onlyInTree}{ ~~Describe \code{onlyInTree} here~~ }
+  \item{phylo4com}{A list of phylo4d objects with abundance data}
+  \item{na.rm}{logical. Should missing abundance values be treated as
+    absences?}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  For each community tree, the upper bound on richness is simply the
+  number of tips in the tree. However, the richness value will be lower
+  if any species do not have positive abundance. When \code{na.rm=TRUE},
+  species with \code{NA} abundance are considered missing, otherwise
+  \code{NA} will propagate through to the result.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  Vector of richness values, with names corresponding the community
+  names in the phylo4com list (if they exist).
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\author{Jim Regetz}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 }

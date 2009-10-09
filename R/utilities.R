@@ -56,7 +56,7 @@ ancestralEdgeLength <- function(tree, node=NULL) {
 
 # tip length extractor
 tipLength <- function(tree) {
-  tip.length <- ancestralEdgeLength(tree, nodes(tree, which="tip"))
+  tip.length <- edgeLength(tree, nodeId(tree, type="tip"))
   names(tip.length) <- tipLabels(tree)
   return(tip.length)
 }

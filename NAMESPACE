@@ -1,3 +1,4 @@
+export(tipLength)
 export(abundance)
 export(`abundance<-`)
 export(minTL)

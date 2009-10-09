@@ -2,7 +2,7 @@
 siteBySpecies <- function(phylo4com) {
   spp <- unique(unlist(lapply(phylo4com, tipLabels)))
   sapply(phylo4com, function(x) {
-    vec <- tdata(x)[spp, "abundance"]
+    vec <- tipData(x)[spp, "abundance"]
     vec[is.na(vec)] <- 0
     names(vec) <- spp
     vec

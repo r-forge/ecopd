@@ -16,22 +16,15 @@ PAE <- function(tree) {
 
 IAC <- function(tree) {
 
-  # Workaround for problem previously in phylobase -- need to figure out
-  # if this has actually been "fixed"
-  #if (!is.na(tree@root.edge)) {
-  #  warning("omitting root edge")
-  #  is.na(tree@root.edge) <- TRUE
-  #}
-
   # Count number of lineages originating at each internal node (i.e.
   # number of splits)
-  int.nodes <- nodes(tree, "internal")
+  int.nodes <- nodeId(tree, "internal")
   nSplits <- sapply(int.nodes, function(x) length(children(tree, x)))
   names(nSplits) <- int.nodes
 
   # For each tip, take the product of the number of splits across all of
   # its ancestral nodes
-  denom <- sapply(tipLabels(tree), function(x)
+  denom <- sapply(nodeId(tree, "tip"), function(x)
     prod(nSplits[as.character(ancestors(tree, x))]))
 
   abundance <- abundance(tree)

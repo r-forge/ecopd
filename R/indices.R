@@ -76,48 +76,24 @@ EED <- function(tree) {
 }
 
 AED <- function(tree) {
- 
-  # Workaround problem in phylobase -- need to figure out if this is
-  # really the right thing to do...
-  #if (!is.na(tree@root.edge)) {
-  #  warning("omitting root edge")
-  #  is.na(tree@root.edge) <- TRUE
-  #}
 
+  # get all node IDs, but excluding root node
+  nonroot.nodes <- setdiff(nodeId(tree), rootNode(tree))
   # Create logical matrix indicating which tips (in columns) are
-  # descendants of each interior node (in rows)
-  #isDescendant <- sapply(tipLabels(tree), function(n) nodeLabels(tree) %in%
-  #  names(ancestors(tree, n)))
+  # descendants of each node (in rows), self-inclusive
+  isDescendant <- sapply(nodeId(tree, "tip"),
+    function(n) nonroot.nodes %in% ancestors(tree, n, "ALL"))
 
-  # Row corresponding to the root node will have all TRUE values. We
-  # want to drop this node from the matrix.
-  #isDescendant <- isDescendant[as.logical(rowSums(!isDescendant)),]
-
-  # New way to do the above, using my node-finding function
-#  int.nodes <- nodesInternal(tree, include.root=FALSE)
-  int.nodes <- nodes(tree, which="int", include.root=FALSE)
-  isDescendant <- sapply(tipLabels(tree), function(n) int.nodes %in%
-    ancestors(tree, n))
-
-  # Create vector of edges on ancestral side of each interior node
-  # (having already excluded the root node). Currently assuming that
-  # these edges are now in the same order as the nodes (rows) of the
-  # above matrix, which is quite possibly wrong
-  #intEdgeLengths <- edgeLength(tree)[-seq_len(nTips(tree))]
-  #tipEdgeLengths <- edgeLength(tree)[seq_len(nTips(tree))]
-  intEdgeLengths <- ancestralEdgeLength(tree, int.nodes)
-  tipEdgeLengths <- tipLength(tree)
+  # Create vector of ancestral edge lengths
+  edge.length <- edgeLength(tree, nonroot.nodes)
 
   # Create matrix containing number of individuals of each species
   # descending from each interior node
   abundance <- abundance(tree)
-  dAbund <- apply(isDescendant, 1, function(x) ifelse(x, abundance[x],
-    0))
+  dAbund <- abundance * t(isDescendant)
 
   # Calculate individual-based AED of each species
-  AED <- tipEdgeLengths + colSums(intEdgeLengths * t(apply(dAbund, 2,
-    function(x) x/sum(x))))
-
+  AED <- colSums(edge.length * t(prop.table(dAbund, margin=2)))
   AED <- AED/abundance
 
   return(AED)

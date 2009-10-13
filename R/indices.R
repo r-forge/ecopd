@@ -39,18 +39,19 @@ IAC <- function(tree) {
 
 }
 
+# TODO: This function includes its own code for not counting root edge
+# length. Maybe this should maybe be done at a higher level?
+# TODO: This function puts the tree in preorder order so descendants()
+# works faster; maybe this should be done by phylo4com constructor?
 ED <- function(tree) {
-# This function includes its own code for not counting root edge length.
-# Maybe this should maybe be done at a higher level?
-  all.nodes <- nodes(tree, which = "all", include.root = TRUE)
+  # preorder tree for better descendants performance
+  tree <- reorder(tree)
+  # set length of root edge to zero
+  edgeLength(tree)[edgeId(tree, "root")] <- 0
+  all.nodes <- nodeId(tree, type = "all")
   nv <- sapply(all.nodes, function(node) {
-    if (node != rootNode(tree)) {
-      S <- length(descendants(tree, node, type = "tips"))
-      ans <- as.vector(ancestralEdgeLength(tree, node)/S)
-      return(ans)
-    } else {
-      return(0.0)
-    }
+    S <- length(descendants(tree, node, type = "tips"))
+    ans <- as.vector(edgeLength(tree, node)/S)
   })
   names(nv) <- all.nodes
   tip.nodes <- nodes(tree, which = "tip")

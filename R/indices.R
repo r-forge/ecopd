@@ -24,8 +24,8 @@ IAC <- function(tree) {
 
   # For each tip, take the product of the number of splits across all of
   # its ancestral nodes
-  denom <- sapply(nodeId(tree, "tip"), function(x)
-    prod(nSplits[as.character(ancestors(tree, x))]))
+  denom <- sapply(ancestors(tree, nodeId(tree, "tip")), function(x)
+    prod(nSplits[as.character(x)]))
 
   abundance <- abundance(tree)
 
@@ -41,23 +41,23 @@ IAC <- function(tree) {
 
 # TODO: This function includes its own code for not counting root edge
 # length. Maybe this should maybe be done at a higher level?
-# TODO: This function puts the tree in preorder order so descendants()
-# works faster; maybe this should be done by phylo4com constructor?
 ED <- function(tree) {
-  # preorder tree for better descendants performance
-  tree <- reorder(tree)
+
   # set length of root edge to zero
   edgeLength(tree)[edgeId(tree, "root")] <- 0
+
   all.nodes <- nodeId(tree, type = "all")
-  nv <- sapply(all.nodes, function(node) {
-    S <- length(descendants(tree, node, type = "tips"))
-    ans <- as.vector(edgeLength(tree, node)/S)
-  })
+  des <- descendants(tree, all.nodes, type="tips")
+  nv <- edgeLength(tree, all.nodes) / sapply(des, length)
   names(nv) <- all.nodes
-  tip.nodes <- nodes(tree, which = "tip")
-  EDI <- sapply(tip.nodes, function(n)
-    sum(nv[as.character(ancestors(tree, n, "ALL"))], na.rm = TRUE))
+
+  tip.nodes <- nodeId(tree, "tip")
+  anc <- ancestors(tree, tip.nodes, "ALL")
+  EDI <- sapply(anc, function(n) sum(nv[as.character(n)], na.rm=TRUE))
+  names(EDI) <- tipLabels(tree)
+
   return(EDI)
+
 }
 
 HED <- function(tree) {
@@ -75,8 +75,8 @@ AED <- function(tree) {
   nonroot.nodes <- setdiff(nodeId(tree), rootNode(tree))
   # Create logical matrix indicating which tips (in columns) are
   # descendants of each node (in rows), self-inclusive
-  isDescendant <- sapply(nodeId(tree, "tip"),
-    function(n) nonroot.nodes %in% ancestors(tree, n, "ALL"))
+  isDescendant <- sapply(ancestors(tree, tipLabels(tree), "ALL"),
+    function(n) nonroot.nodes %in% n)
 
   # Create vector of ancestral edge lengths
   edge.length <- edgeLength(tree, nonroot.nodes)

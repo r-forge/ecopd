@@ -1,5 +1,8 @@
 # Generate site-by-species matrix
-siteBySpecies <- function(phylo4com) {
+siteBySpecies <- function(phylo4com, presence.only=FALSE,
+  transpose=FALSE) {
+
+  ## create and populate the matrix
   spp <- unique(unlist(lapply(phylo4com, tipLabels)))
   mat <- sapply(phylo4com, function(x) {
     vec <- tipData(x)[spp, "abundance"]
@@ -7,7 +10,16 @@ siteBySpecies <- function(phylo4com) {
     vec
   })
   rownames(mat) <- spp
-  mat
+
+  if (presence.only) {
+    mat[mat>0] <- 1
+    mat[mat<=0] <- 0
+  }
+
+  if (!transpose) mat <- t(mat)
+
+  return(mat)
+
 }
 
 # Calculate species richness

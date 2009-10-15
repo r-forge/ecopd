@@ -3,12 +3,11 @@
 \alias{ecoPD}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Ecologically-informed phylodiversity metrics in R
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+This package is intended to provide a novel set of metrics and functions
+for combining ecological and phylogenetic information.
 }
 \details{
 \tabular{ll}{
@@ -16,23 +15,19 @@ Package: \tab ecoPD\cr
 Type: \tab Package\cr
 Version: \tab 0.1\cr
 Date: \tab 2008-09-03\cr
-License: \tab TBD\cr
+License: \tab GPL\cr
 LazyLoad: \tab yes\cr
 LazyData: \tab yes\cr
 }
-~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-Who wrote it
-
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+  Authors: Jim Regetz, Marc Cadotte, and Jonathan Davies, with support
+  from the National Center for Ecological Analysis and Synthesis (NCEAS)
 }
 \references{
-~~ Literature or other references for background information ~~
+  Cadotte, M., Davies, J., Regetz, J., Kembel, S., Cleland, E., and
+  Oakley, T. (In press) Phylogenetic diversity metrics for ecological
+  communities: integrating species richness, abundance and evolutionary
+  history. \emph{Ecology Letters}.
 }
 \keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}

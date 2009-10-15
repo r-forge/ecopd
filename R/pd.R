@@ -2,8 +2,8 @@
 pd <- function(tree) {
   # exclude root edge from calculation (if it exists)
   if (isRooted(tree)) {
-    root.node <- rootNode(tree)
-    tot.length <- sum(edgeLength(tree)[-root.node])
+    nonroot.nodes <- setdiff(nodeId(tree), rootNode(tree))
+    tot.length <- sum(edgeLength(tree, nonroot.nodes))
   } else {
     tot.length <- sum(edgeLength(tree))
   }

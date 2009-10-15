@@ -10,7 +10,7 @@ richness(phylo4com, na.rm = FALSE)
 }
 \arguments{
   \item{phylo4com}{A list of phylo4d objects with abundance data}
-  \item{na.rm}{logical. Should missing abundance values be treated as
+  \item{na.rm}{(logical) Should missing abundance values be treated as
     absences?}
 }
 \details{
@@ -24,6 +24,6 @@ richness(phylo4com, na.rm = FALSE)
   Vector of richness values, with names corresponding the community
   names in the phylo4com list (if they exist).
 }
-\author{Jim Regetz}
+\author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
 }

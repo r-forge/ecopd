@@ -1,6 +1,6 @@
 \name{siteBySpecies}
 \alias{siteBySpecies}
-\title{ Site-by-species matrix }
+\title{Generate site-by-species matrix}
 \description{
   Returns a site-by-species matrix of abundance values from a phylo4com
   list.

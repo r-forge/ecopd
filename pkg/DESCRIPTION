@@ -6,7 +6,8 @@ Date: 2008-09-03
 Author: Jim Regetz, Marc Cadotte, Jonathan Davies
 Maintainer: Jim Regetz <regetz@nceas.ucsb.edu>
 Depends: ape, phylobase
-Description: Does stuff
-License: TBD
+Description: A set of metrics and functions for combining ecological and
+phylogenetic information
+License: GPL
 LazyLoad: yes
 LazyData: yes

@@ -1,49 +1,44 @@
 \name{abundance}
 \alias{abundance}
 \alias{abundance<-}
-\title{ Species abundances in a phylogeny }
+\title{ Get or set species abundances }
 \description{
-Functions to get or set the names of an object.
+Functions to get or set the abundances of tip taxa in a phylogenetic
+tree.
 }
 \usage{
-abundance(tree)
-abundance(tree) <- value
+  abundance(tree)
+  abundance(tree) <- value
 }
 \arguments{
-  \item{tree}{ A phylogenetic tree (i.e. an object of class '"phylo"')}
-  \item{value}{ Numeric vector of length equal to the number of tips in
-tree. Order should correspond to the order of species given by
-tree\$tip.label }
+  \item{tree}{An object of class \code{phylo4d}.}
+  \item{value}{Numeric vector of length equal to the number of tips in
+    the tree. Order should correspond to the output of nodeId(tree,
+    type="tip").}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  Any missing abundances will be represented by \code{NA}, including the
+  case when abundance data are missing from the tree altogether. All
+  abundance values can be removed by using an assignment value of
+  \code{NULL}.
+
+  Note that in the assignment form, subscripting can be used to replace
+  particular abundance values; see examples.
 }
 \value{
-     For 'abundance', 'NULL' or a named vector of the same length as
-     tips of tree. ('NULL' is given if the tree has no assigned
-     abundance values.) For 'abundance<-', the updated tree.
+  For \code{abundance}, a named vector of the same length as tips of
+  tree. For \code{abundance<-}, the updated tree.
 }
-\author{ Jim Regetz }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
+\author{Jim Regetz}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+  data(weeds)
+  abundance(weeds$A)
 
-## The function is currently defined as
-function(tree, value) {
+  ## modify one particular abundance value
+  abundance(weeds$A)["Centaurea_alba"] <- 10
+  abundance(weeds$A)
 
-  if (!is.numeric(value)) {
-    stop("abundance values must be a numeric vector")
-  } else if (length(value)!=length(tree$tip.label)) {
-    stop("number of abundance values must equal number of species")
-  }
-
-  tree$abundance <- value
-  return(tree)
-
-  }
+  ## remove abundance data altogether
+  abundance(weeds$A) <- NULL
+  abundance(weeds$A)
 }

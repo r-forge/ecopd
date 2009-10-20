@@ -5,7 +5,7 @@
   Returns the lengths of all tip edges of a phylogeny.
 }
 \usage{
-tipLength(x)
+  tipLength(x)
 }
 \arguments{
   \item{x}{a \code{phylo4} object (or one that inherits from it)}
@@ -20,6 +20,6 @@ tipLength(x)
   phylobase method.
 }
 \examples{
-  data(weed)
-  tipLength(weed$A)
+  data(weeds)
+  tipLength(weeds$A)
 }

@@ -55,10 +55,20 @@ ancestralEdgeLength <- function(tree, node=NULL) {
 }
 
 # tip length extractor
-tipLength <- function(phy) {
-  tip.length <- edgeLength(phy, nodeId(phy, type="tip"))
-  names(tip.length) <- tipLabels(phy)
-  return(tip.length)
+tipLength <- function(phy, from=c("parent", "root")) {
+  from <- match.arg(from)
+  tips <- nodeId(phy, type="tip")
+  if (from=="parent") {
+    len <- edgeLength(phy, tips)
+  } else if (from=="root") {
+    root.node <- rootNode(phy)
+    anc <- ancestors(phy, tips, "ALL")
+    len <- sapply(anc, function(n) {
+      sumEdgeLength(phy, setdiff(n, root.node))
+    })
+  }
+  names(len) <- tipLabels(phy)
+  return(len)
 }
 
 # abundance extractor

@@ -60,7 +60,13 @@ test.siteBySpecies <- function() {
     20, 20), .Dim = c(5L, 3L), .Dimnames =
     list(c("Taraxacum_officinale", "Silybum_marianum", "Centaurea_alba",
     "Torilis_arvensis", "Trifolium_repens"), c("A", "B", "C")))
-  checkIdentical(siteBySpecies(comtrees), target)
+  checkIdentical(siteBySpecies(comtrees), t(target))
+  checkIdentical(siteBySpecies(comtrees, transpose=TRUE), target)
+  # presence/absence only
+  target[] <- 1
+  checkIdentical(siteBySpecies(comtrees, presence=TRUE, transpose=TRUE),
+    target)
+
 }
 
 test.richness <- function() {

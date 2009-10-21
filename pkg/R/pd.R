@@ -1,11 +1,11 @@
 # basic pd calculation
-pd <- function(tree) {
+pd <- function(phy) {
   # exclude root edge from calculation (if it exists)
-  if (isRooted(tree)) {
-    nonroot.nodes <- setdiff(nodeId(tree), rootNode(tree))
-    tot.length <- sum(edgeLength(tree, nonroot.nodes))
+  if (isRooted(phy)) {
+    nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
+    tot.length <- sum(edgeLength(phy, nonroot.nodes))
   } else {
-    tot.length <- sum(edgeLength(tree))
+    tot.length <- sum(edgeLength(phy))
   }
   return(tot.length)
 }
@@ -15,15 +15,10 @@ getMinTL <- function(tree, genera) {
 
   if (missing(genera)) stop("must supply vector of genera")
 
-  lengthsTipToRoot <- function(tree) {
-    # Workaround problem in phylobase -- need to figure out if this is
-    # really the right thing to do...
-    if (!is.na(tree@root.edge)) {
-      warning("omitting root edge")
-      is.na(tree@root.edge) <- TRUE
-    }
-    sapply(tipLabels(tree), function(x) {
-      sumEdgeLength(tree, ancestors(tree, x, "ALL"))
+  lengthsTipToRoot <- function(x) {
+    root.node <- rootNode(x)
+    sapply(ancestors(x, nodeId(x, "tip"), "ALL"), function(n) {
+      sumEdgeLength(x, setdiff(n, root.node))
     })
   }
 

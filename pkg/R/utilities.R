@@ -55,50 +55,50 @@ ancestralEdgeLength <- function(tree, node=NULL) {
 }
 
 # tip length extractor
-tipLength <- function(tree) {
-  tip.length <- edgeLength(tree, nodeId(tree, type="tip"))
-  names(tip.length) <- tipLabels(tree)
+tipLength <- function(phy) {
+  tip.length <- edgeLength(phy, nodeId(phy, type="tip"))
+  names(tip.length) <- tipLabels(phy)
   return(tip.length)
 }
 
 # abundance extractor
-abundance <- function(tree) {
-  abund <- tipData(tree)$abundance
-  if (is.null(abund)) abund <- rep(NA_real_, nTips(tree))
-  names(abund) <- row.names(tipData(tree))
+abundance <- function(phy) {
+  abund <- tipData(phy)$abundance
+  if (is.null(abund)) abund <- rep(NA_real_, nTips(phy))
+  names(abund) <- row.names(tipData(phy))
   return(abund)
 }
 
 # abundance assignment function
-`abundance<-` <- function(tree, value) {
-  tipData(tree)$abundance <- value
-  return(tree)
+`abundance<-` <- function(phy, value) {
+  tipData(phy)$abundance <- value
+  return(phy)
 }
 
 # minTL extractor
-minTL <- function(tree) {
-  minTL <- tdata(tree)$minTL
+minTL <- function(phy) {
+  minTL <- tdata(phy)$minTL
   if (!is.null(minTL)) {
-    names(minTL) <- row.names(tdata(tree))
+    names(minTL) <- row.names(tdata(phy))
   }
   return(minTL)
 }
 
 # minTL assignment function
-`minTL<-` <- function(tree, value) {
+`minTL<-` <- function(phy, value) {
 # MAKE SURE THIS MATCHES WITH THE TAXA ORDER IN THE TREE!
   if (!is.numeric(value)) {
     stop("minTL values must be a numeric vector")
-  } else if (length(value)!=nrow(tdata(tree))) {
+  } else if (length(value)!=nrow(tdata(phy))) {
     stop("number of minTL values must equal number of species")
   }
-  tree@tip.data <- replace(tree@tip.data, "minTL", value)
-  return(tree)
+  phy@tip.data <- replace(phy@tip.data, "minTL", value)
+  return(phy)
 }
 
 # genera extractor
-genera <- function(tree) {
+genera <- function(phy) {
   #From taxa names in tree, remove "_" and species name after
-  gsub("_.*$", "", tipLabels(tree))
+  gsub("_.*$", "", tipLabels(phy))
 }
 

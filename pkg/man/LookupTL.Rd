@@ -3,7 +3,7 @@
 \docType{data}
 \title{Family-based lookup table for minimum tip lengths}
 \description{
-  ~~ A concise (1-5 lines) description of the dataset. ~~
+  TODO
 }
 \format{
   A data frame with information on 404 families, referenced by rowname:
@@ -17,12 +17,12 @@
   }
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  TODO
 }
 \source{
-  ~~ reference to a publication or URL from which the data were obtained ~~
+  TODO
 }
 \references{
-  ~~ possibly secondary sources and usages ~~
+  TODO
 }
 \keyword{datasets}

@@ -1,17 +1,17 @@
 \name{abundance}
 \alias{abundance}
 \alias{abundance<-}
-\title{ Get or set species abundances }
+\title{Get or set species abundances}
 \description{
 Functions to get or set the abundances of tip taxa in a phylogenetic
 tree.
 }
 \usage{
-  abundance(tree)
-  abundance(tree) <- value
+  abundance(phy)
+  abundance(phy) <- value
 }
 \arguments{
-  \item{tree}{An object of class \code{phylo4d}.}
+  \item{phy}{a \code{phylo4d} object}
   \item{value}{Numeric vector of length equal to the number of tips in
     the tree. Order should correspond to the output of nodeId(tree,
     type="tip").}
@@ -29,7 +29,7 @@ tree.
   For \code{abundance}, a named vector of the same length as tips of
   tree. For \code{abundance<-}, the updated tree.
 }
-\author{Jim Regetz}
+\author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
   data(weeds)
   abundance(weeds$A)

@@ -1,42 +1,28 @@
 \name{genera}
 \alias{genera}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{Extract genus names}
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Helper function to extract the genus names from phylogeny tip labels
+  in the case when those labels are scientific names using binomial
+  nomenclature.
 }
 \usage{
-genera(tree)
+  genera(phy)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{tree}{ ~~Describe \code{tree} here~~ }
+  \item{phy}{a \code{phylo4} object (or one that inherits from it)}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  This is a simple function that assumes the tip labels of phylogeny
+  \code{phy} are of the form \dQuote{genus_species}. It does no checking
+  whatsoever to check whether this is in fact the case.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  A character vector containing the genus portion of the tip labels,
+  with element names corresponding to the numeric tip node ID.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function(tree) {
-  #From taxa names in tree, remove "_" and species name after
-  gsub("_.*$", "", tree$tip.label)
-  }
+  data(weeds)
+  genera(weeds$A)
 }

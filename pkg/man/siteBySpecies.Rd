@@ -6,11 +6,11 @@
   list.
 }
 \usage{
-siteBySpecies(phylo4com, presence=FALSE, transpose=FALSE)
+siteBySpecies(phylo4com, presence.only=FALSE, transpose=FALSE)
 }
 \arguments{
   \item{phylo4com}{A list of phylo4d objects with abundance data}
-  \item{presence}{(logical) Should abundance values be replaced
+  \item{presence.only}{(logical) Should abundance values be replaced
     with 1/0 indicators of presence/absence? Default FALSE.}
   \item{transpose}{(logical) Should matrix be transposed to put 
     species in rows and sites in columns? Default FALSE.}

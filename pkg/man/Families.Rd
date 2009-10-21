@@ -3,22 +3,16 @@
 \docType{data}
 \title{Plant family lookup vector}
 \description{
-Built-in vector useful for determining the plant family for a particular
-plant genus.
+  Built-in vector useful for determining the plant family for a
+  particular plant genus.
 }
 \format{
-A named character vector matching 13,584 genus names with their
-respective families. Vector names are primarily genus names, although
-the 408 family names are also included for self-referential lookups.
-}
-\details{
-  ~~ If necessary, more details than the description above ~~
+  A named character vector matching 13,584 genus names with their
+  respective families. Vector names are primarily genus names, although
+  the 408 family names are also included for self-referential lookups.
 }
 \source{
-  ~~ reference to a publication or URL from which the data were obtained ~~
-}
-\references{
-  ~~ possibly secondary sources and usages ~~
+  [reference?]
 }
 \examples{
 Families["Liriodendron"]

@@ -1,35 +1,31 @@
 \name{minTL}
-\alias{minTL<-}
 \alias{minTL}
-\title{ Species minTLs in a phylogeny }
+\alias{minTL<-}
+\title{Get or set minimum tip lengths}
 \description{
-Functions to get or set species minimum tip lengths (minTL)
+  Functions to get or set species minimum tip lengths (minTL) for a
+  phylogeny.
 }
 \usage{
-minTL(tree)
-minTL(tree) <- value
+  minTL(phy)
+  minTL(phy) <- value
 }
 \arguments{
-  \item{tree}{ A phylogenetic tree (i.e. an object of class '"phylo"')}
-  \item{value}{ Numeric vector of length equal to the number of tips in
-tree. Order should correspond to the order of species given by
-tree\$tip.label }
+  \item{phy}{a \code{phylo4d} object}
+  \item{value}{Numeric vector of length equal to the number of tips in
+    the tree. Order should correspond to the output of nodeId(tree,
+    type="tip").}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  TODO
 }
 \value{
-     For 'minTL', 'NULL' or a named vector of the same length as
-     tips of tree. ('NULL' is given if the tree has no assigned
-     minTL values.) For 'minTL<-', the updated tree.
+  For \code{minTL}, a named numeric vector of the same length as tips of
+  tree. (\code{NULL} is returned if the tree has no assigned minTL
+  values.) For \code{minTL<-}, the updated tree.
 }
-\author{ Jim Regetz }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
+\author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+  data(weeds)
+  minTL(weeds$A)
 }

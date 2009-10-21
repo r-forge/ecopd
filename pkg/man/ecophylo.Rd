@@ -1,41 +1,46 @@
 \name{ecophylo}
-\alias{ecophylo}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\alias{phylo4com}
+\title{Create list of community phylogenies}
 \description{
-  ~~ A concise (1-5 lines) description of what the function does. ~~
+  Function to combine species abundance data with phylogenetic
+  information for a set of communities.
 }
 \usage{
-ecophylo(communityID, species, abundance, tree)
+  phylo4com(communityID, species, abundance, tree,
+    missing=c("warn", "OK", "fail"))
 }
 \arguments{
-  \item{communityID}{ Vector of community identifiers }
-  \item{species}{ Vector of species names; must correspond to tip labels
-    of the supplied tree }
-  \item{abundance}{ Numeric vector of abundances of each species in each
-    community }
-  \item{tree}{ Phylogenetic tree (phylo format) of all species across
-    all communities }
+  \item{communityID}{Vector of community identifiers.}
+  \item{species}{Vector of species names; must correspond to tip labels
+    of the supplied tree.}
+  \item{abundance}{Numeric vector of abundances of each species in each
+    community.}
+  \item{tree}{A \code{phylo4} object (or one that inherits from it).}
+  \item{missing}{(not currently implemented) What to do if some
+    requested node IDs or names are not in the tree: warn, do nothing,
+    or stop with an error.}
 }
 \details{
-  ~~ If necessary, more details than the description above ~~
+  TODO
+
+  If the species vector contains values that do not appear in the tree,
+  they are ignored with a warning. If a community has fewer than one
+  species matched in the tree, an error will result. In both cases, the
+  behavior is simply a result of how the phylobase \code{subset} method
+  works; see the help page for this method for more information.
 }
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  A list of \code{phylo4d} objects, one per unique value in the
+  \code{communityID} vector. List element names are taken from the
+  \code{communityID} vector.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
-
- ~Make other sections like Warning with \section{Warning }{....} ~
+\author{Jim Regetz (regetz@nceas.ucsb.edu)}
+\seealso{
+  \code{\link[phylobase]{subset}} in the phylobase package
 }
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+  ##TODO -- contruction example
+  # Example of a phylo4com result
+  data(weeds)
+  print(weeds)
 }

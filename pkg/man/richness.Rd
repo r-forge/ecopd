@@ -6,7 +6,7 @@
   taxa having positive abundance.
 }
 \usage{
-richness(phylo4com, na.rm = FALSE)
+  richness(phylo4com, na.rm = FALSE)
 }
 \arguments{
   \item{phylo4com}{A list of phylo4d objects with abundance data}
@@ -26,4 +26,6 @@ richness(phylo4com, na.rm = FALSE)
 }
 \author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
+  data(weeds)
+  richness(weeds)
 }

@@ -10,9 +10,16 @@
   tipLength(phy, from=c("parent", "root"))
 }
 \arguments{
-  \item{phy}{a \code{phylo4} object (or one that inherits from it)}
+  \item{phy}{A \code{phylo4} object (or one that inherits from it)}
   \item{from}{Should lengths represent distance from parents only (i.e.,
     simply the lengths of terminal branches), or from the root node?}
+}
+\details{
+  When \code{from} is \code{"parent"}, the function is a straightforward
+  wrapper of the \code{edgeLength} function in the phylobase package.
+  When \code{from} is \code{"root"}, the function uses an implementation
+  of Dijkstra's algorithm to compute the total distance from the root to
+  each of the tips.
 }
 \value{
   Numeric vector of lengths, with the associated tip node labels as
@@ -25,8 +32,7 @@
 }
 \author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \seealso{
-  Methods \code{\link[phylobase:phylo4-accessors]{edgeLength}} and
-  \code{\link[phylobase:phylo4-accessors]{sumEdgeLength}} in the
+  Method \code{\link[phylobase:phylo4-accessors]{edgeLength}} in the
   phylobase package.
 }
 \examples{

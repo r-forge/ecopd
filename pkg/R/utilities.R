@@ -54,6 +54,38 @@ ancestralEdgeLength <- function(tree, node=NULL) {
   return(branch.length)
 }
 
+# internal function to compute distances from one node to all others
+# NOTE: assumes node IDs are always 1:n (currently true of phylo4 objs)
+dijkstra <- function(phy, node) {
+  edge <- edges(phy, drop.root=TRUE)
+  elen <- edgeLength(phy)
+  nodes <- nodeId(phy, "all")
+  n <- length(nodes)
+  d <- rep(Inf, length=n)
+  names(d) <- nodes
+  d[node] <- 0
+  while (length(nodes)>0) {
+    u <- nodes[which.min(d[nodes])[[1]]]
+    if (is.infinite(d[u])) break
+    nodes <- nodes[-match(u, nodes)]
+    anc <- edge[edge[,2]==u,1]
+    for (parent in anc[anc %in% nodes]) {
+      alt <- d[u] + elen[paste(parent, u, sep="-")]
+      if (alt < d[parent]) {
+        d[parent] <- alt
+      }
+    }
+    des <- edge[edge[,1]==u,2]
+    for (child in des[des %in% nodes]) {
+      alt <- d[u] + elen[paste(u, child, sep="-")]
+      if (alt < d[child]) {
+        d[child] <- alt
+      }
+    }
+  }
+  d
+}
+
 # tip length extractor
 tipLength <- function(phy, from=c("parent", "root")) {
   from <- match.arg(from)
@@ -61,11 +93,8 @@ tipLength <- function(phy, from=c("parent", "root")) {
   if (from=="parent") {
     len <- edgeLength(phy, tips)
   } else if (from=="root") {
-    root.node <- rootNode(phy)
-    anc <- ancestors(phy, tips, "ALL")
-    len <- sapply(anc, function(n) {
-      sumEdgeLength(phy, setdiff(n, root.node))
-    })
+    len <- dijkstra(phy, rootNode(phy))
+    len <- len[match(tips, names(len))]
   }
   names(len) <- tipLabels(phy)
   return(len)

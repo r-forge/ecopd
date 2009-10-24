@@ -141,3 +141,67 @@ genera <- function(phy) {
   gsub("_.*$", "", tipLabels(phy))
 }
 
+
+## this works as implementation of dist.nodes for phylo4 objects, albeit
+## about 1.5x slower than dist.nodes
+pairdist <- function(phy, type=c("all", "tip"), use.labels=FALSE) {
+
+  if (hasPoly(phy) || hasRetic(phy)) {
+    stop("pairdist can't currently handle polytomies or reticulation")
+  }
+
+  type <- match.arg(type)
+  edge <- edges(phy, drop.root=TRUE)
+  elen <- edgeLength(phy)
+  elen <- elen[!names(elen) %in% edgeId(phy, "root")]
+  nodes <- nodeId(phy, "all")
+  n <- length(nodes)
+  d <- matrix(NA_real_, nrow=n, ncol=n)
+  diag(d) <- 0
+  d[edge] <- d[edge[,2:1]] <- elen
+  ntips <- nTips(phy)
+  tips <- nodeId(phy, "tip")
+  tip.parents <- sapply(tips, function(n) edge[edge[,2]==n, 1])
+  nodes.todo <- tip.parents[duplicated(tip.parents)]
+  done <- tips
+  root <- if (isRooted(phy)) rootNode(phy) else ntips+1
+  descendants <- matrix(edge[order(edge[,1]),2], nrow=2)
+  ancestors <- edge[match(nodes, edge[,2]), 1]
+
+  while(length(nodes.todo)>0) {
+    nod <- nodes.todo[1]
+    if (nod==root && length(nodes.todo)>1) {
+      nod <- nodes.todo[2]
+    }
+    des1 <- descendants[1, nod-ntips]
+    des2 <- descendants[2, nod-ntips]
+    if (des1>ntips) des1 <- which(!is.na(d[des1, ]))
+    if (des2>ntips) des2 <- which(!is.na(d[des2, ]))
+    for (y in des1) {
+      d[y, des2] <- d[des2, y] <- d[nod, y] + d[nod, des2]
+    }
+    if (nod!=root) {
+      anc <- ancestors[nod]
+      l <- elen[paste(anc, nod, sep="-")]
+      d[des2, anc] <- d[anc, des2] <- d[nod, des2] + l
+      d[des1, anc] <- d[anc, des1] <- d[nod, des1] + l
+      done <- c(done, nod)
+      if (all(descendants[, anc-ntips] %in% done)) {
+        nodes.todo <- c(nodes.todo, anc)
+      }
+    }
+    nodes.todo <- nodes.todo[nod!=nodes.todo]
+  }
+
+  if (type=="tip") {
+    d <- d[1:ntips, 1:ntips]
+  }
+
+  if (use.labels) {
+    rownames(d) <- colnames(d) <- unname(labels(phy, type=type))
+  } else {
+    rownames(d) <- colnames(d) <- nodeId(phy, type=type)
+  }
+
+  return(d)
+}

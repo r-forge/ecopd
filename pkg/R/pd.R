@@ -13,14 +13,9 @@ pd <- function(phy) {
 # lookup function for minimum tip length
 getMinTL <- function(tree, genera) {
 
-  if (missing(genera)) stop("must supply vector of genera")
+  Supertree <- phylo4(Supertree)
 
-  lengthsTipToRoot <- function(x) {
-    root.node <- rootNode(x)
-    sapply(ancestors(x, nodeId(x, "tip"), "ALL"), function(n) {
-      sumEdgeLength(x, setdiff(n, root.node))
-    })
-  }
+  if (missing(genera)) stop("must supply vector of genera")
 
   # Families, Supertree, and LookupTL are all system data built into
   # the package
@@ -48,8 +43,8 @@ getMinTL <- function(tree, genera) {
   # any user-supplied taxa cannot be matched to families in the
   # supertree, they are simply ignored
   subsupertree <- subset(Supertree, na.omit(familiesInSupertree))
-  subsupertree.maxLength <- max(cophenetic(subsupertree))/2
-  tree.maxLength <- max(lengthsTipToRoot(tree))
+  subsupertree.maxLength <- max(pairdist(subsupertree, type="tip"))/2
+  tree.maxLength <- max(tipLength(tree, from="root"))
 
   tableTL <- LookupTL[familiesInSupertree, "minTL"]
 
@@ -66,7 +61,7 @@ getMinTL <- function(tree, genera) {
   }
 
   lookupTL <- tableTL * (tree.maxLength / subsupertree.maxLength)
-  actualTL <- tipLength(tree)
+  actualTL <- tipLength(tree, from="parent")
   minTL <- ifelse(lookupTL < actualTL, lookupTL, actualTL)
 
   return(minTL)

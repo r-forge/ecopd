@@ -116,22 +116,22 @@ abundance <- function(phy) {
 
 # minTL extractor
 minTL <- function(phy) {
-  minTL <- tdata(phy)$minTL
+  minTL <- tipData(phy)$minTL
   if (!is.null(minTL)) {
-    names(minTL) <- row.names(tdata(phy))
+    names(minTL) <- row.names(tipData(phy))
   }
   return(minTL)
 }
 
+# Note: function assumes values are in nodeId(phy, "tip") order
 # minTL assignment function
 `minTL<-` <- function(phy, value) {
-# MAKE SURE THIS MATCHES WITH THE TAXA ORDER IN THE TREE!
   if (!is.numeric(value)) {
     stop("minTL values must be a numeric vector")
-  } else if (length(value)!=nrow(tdata(phy))) {
+  } else if (length(value)!=nTips(phy)) {
     stop("number of minTL values must equal number of species")
   }
-  phy@tip.data <- replace(phy@tip.data, "minTL", value)
+  tipData(phy)[["minTL"]] <- value
   return(phy)
 }
 

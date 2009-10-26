@@ -5,10 +5,11 @@
   Calculates PD (phylogenetic diversity) for a phylogeny
 }
 \usage{
-  pd(phy)
+  pd(phy, method=c("traditional", "polytomy", "yule"))
 }
 \arguments{
-  \item{phy}{a \code{phylo4} object (or one that inherits from it)}
+  \item{phy}{A \code{phylo4d} object.}
+  \item{method}{Method for calculating pd.}
 }
 \details{
   TODO
@@ -23,4 +24,8 @@
 \examples{
   data(weeds)
   pd(weeds$A)
+
+  minTL(weeds$A) <- getMinTL(weeds$A, genera(weeds$A))
+  pd(weeds$A, "polytomy")
+  pd(weeds$A, "yule")
 }

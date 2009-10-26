@@ -1,5 +1,10 @@
 # basic pd calculation
-pd <- function(phy) {
+pd <- function(phy, method=c("traditional", "polytomy", "yule")) {
+  ## if using non-traditional pd, adjust tip lengths based on abundance
+  method <- match.arg(method)
+  if (method %in% c("polytomy", "yule")) {
+    phy <- weightByAbund(phy, method)
+  } 
   # exclude root edge from calculation (if it exists)
   if (isRooted(phy)) {
     nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
@@ -105,14 +110,4 @@ weightByAbund <- function(tree, method=c("polytomy", "yule")) {
 
   return(tree)
 
-}
-
-# calculate PD value for a single community
-commPD <- function(tree, method=c("traditional", "polytomy", "yule")) {
-  method <- match.arg(method)
-  if (method == "traditional") {
-    pd(tree)
-  } else {
-    pd(weightByAbund(tree, method))
-  } 
 }

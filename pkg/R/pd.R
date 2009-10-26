@@ -83,12 +83,7 @@ weightByAbund <- function(tree, method=c("polytomy", "yule")) {
 
   n <- abundance(tree)
   minLength <- minTL(tree)
-
-  tipLen <- ancestralEdgeLength(foo, getnodes(foo,
-    names(abundance(foo))))
-  # Longer form above ensures consistent ordering, but given phylo4
-  # rules it might be sufficient to use:
-  # tipLen <- ancestralEdgeLength(foo, nodes(foo, "tip"))
+  tipLen <- tipLength(tree)
  
   # Test statement:
   if (!identical(names(n), names(minLength))) {
@@ -106,8 +101,7 @@ weightByAbund <- function(tree, method=c("polytomy", "yule")) {
   # Note that this is (unfortunately) tightly coupled to the
   # implementation of phylo4 objects -- an assignment method would be
   # better
-  tree@edge.length[match(nodes(tree, "tip"), edges(tree)[,2])] <-
-    newLength
+  tree@edge.length[getEdge(tree, nodeId(tree, "tip"))] <- newLength
 
   return(tree)
 

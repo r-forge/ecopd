@@ -1,0 +1,113 @@
+# basic pd calculation
+pd <- function(phy, method=c("traditional", "polytomy", "yule")) {
+  ## if using non-traditional pd, adjust tip lengths based on abundance
+  method <- match.arg(method)
+  if (method %in% c("polytomy", "yule")) {
+    phy <- weightByAbund(phy, method)
+  } 
+  # exclude root edge from calculation (if it exists)
+  if (isRooted(phy)) {
+    nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
+    tot.length <- sum(edgeLength(phy, nonroot.nodes))
+  } else {
+    tot.length <- sum(edgeLength(phy))
+  }
+  return(tot.length)
+}
+
+# lookup function for minimum tip length
+getMinTL <- function(tree, genera) {
+
+  Supertree <- phylo4(Supertree)
+
+  if (missing(genera)) stop("must supply vector of genera")
+
+  # Families, Supertree, and LookupTL are all system data built into
+  # the package
+
+  # Supplied tree must be ultrametric
+# Not sure this is necessary?? Removing for now...
+#  tree.phy <- suppressWarnings(as(foo, "phylo"))
+#  if (!is.ultrametric(tree.phy)) {
+#    stop(deparse(substitute(tree)), " is not ultrametric")
+#  }
+
+  # TODO: if genus not in Families vector, need to give warning.
+  families <- Families[genera]
+
+  # if Family is not in LookupTL give a warning, and later
+  # use minTL based on average across all families in the lookup table
+  if (!all(families %in% row.names(LookupTL))) {
+    warning("one or more taxa missing from lookup table; using mean minTL")
+  }
+
+  familiesInSupertree <- LookupTL[families, "supertree"]
+  familiesInSupertree <- as.character(familiesInSupertree)
+
+  # Subset the supertree using families from the user-supplied tree. If
+  # any user-supplied taxa cannot be matched to families in the
+  # supertree, they are simply ignored
+  subsupertree <- subset(Supertree, na.omit(familiesInSupertree))
+  subsupertree.maxLength <- max(pairdist(subsupertree, type="tip"))/2
+  tree.maxLength <- max(tipLength(tree, from="root"))
+
+  tableTL <- LookupTL[familiesInSupertree, "minTL"]
+
+  # if any TLs are 0 or NA, give warning and use average minTL across
+  # all families in the LookupTL table
+  if(any(tableTL==0 | is.na(tableTL))) {
+    numNA <- sum(tableTL==0 | is.na(tableTL))
+    warning("Using meanTL for ", numNA, " tip", if(numNA>1) "s") 
+    # calculate average minTL across the entire LookupTL table,
+    # excluding any non-positive or NA values
+    meanMinTL <- mean(LookupTL$minTL[LookupTL$minBL > 0], na.rm=TRUE)
+    tableTL[is.na(tableTL)] <- meanMinTL  
+    tableTL[tableTL<=0] <- meanMinTL  
+  }
+
+  lookupTL <- tableTL * (tree.maxLength / subsupertree.maxLength)
+  actualTL <- tipLength(tree, from="parent")
+  minTL <- ifelse(lookupTL < actualTL, lookupTL, actualTL)
+
+  return(minTL)
+ 
+}
+
+# function to weight tip length based on abundance
+weightByAbund <- function(tree, method=c("polytomy", "yule")) {
+
+  method <- match.arg(method)
+
+  if (is.null(abundance(tree))) {
+    stop("tree contains no abundance information")
+  }
+
+  if (is.null(minTL(tree))) {
+    stop("tree contains no minTL information")
+  }
+
+  n <- abundance(tree)
+  minLength <- minTL(tree)
+  tipLen <- tipLength(tree)
+ 
+  # Test statement:
+  if (!identical(names(n), names(minLength))) {
+    stop("mismatch between abundance and minTL vectors")
+  }
+
+  if (method=="polytomy") {
+    newLength <- tipLen + (n-1) * minLength
+  } else if (method=="yule") {
+    C <- 0.57722
+    newLength <- tipLen - minLength +
+      (minLength * (n-1) / (log(n) + C-1))
+  }
+
+  # Note that this is (unfortunately) tightly coupled to the
+  # implementation of phylo4 objects -- an assignment method would be
+  # better
+  tree@edge.length[getEdge(tree, nodeId(tree, "tip"))] <- newLength
+
+  return(tree)
+
+}

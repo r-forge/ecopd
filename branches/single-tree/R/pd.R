@@ -1,19 +1,47 @@
-# basic pd calculation
-pd <- function(phy, method=c("traditional", "polytomy", "yule")) {
-  ## if using non-traditional pd, adjust tip lengths based on abundance
-  method <- match.arg(method)
-  if (method %in% c("polytomy", "yule")) {
-    phy <- weightByAbund(phy, method)
-  } 
-  # exclude root edge from calculation (if it exists)
-  if (isRooted(phy)) {
-    nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
-    tot.length <- sum(edgeLength(phy, nonroot.nodes))
-  } else {
-    tot.length <- sum(edgeLength(phy))
-  }
-  return(tot.length)
-}
+##
+## PD methods
+##
+
+setGeneric("pd", function(x, ...) {
+    standardGeneric("pd")
+})
+
+setMethod("pd", signature(x="phylo4d"), function(x,
+  method=c("traditional", "polytomy", "yule"), ...) {
+    phyc <- phylo4com(x, ...)
+    pd(phyc, method=method)
+})
+
+setMethod("pd", signature(x="phylo4com"), function(x,
+  method=c("traditional", "polytomy", "yule")) {
+
+    .pd <- function(phy, method) {
+        ## if using non-traditional pd, adjust tip lengths based on abundance
+        if (method %in% c("polytomy", "yule")) {
+            stop("Non-trad PD not yet implemented for phylo4com")
+#            phy <- weightByAbund(phy, method)
+        } 
+        # exclude root edge from calculation (if it exists)
+        if (isRooted(phy)) {
+            nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
+            tot.length <- sum(edgeLength(phy, nonroot.nodes))
+        } else {
+            tot.length <- sum(edgeLength(phy))
+        }
+        return(tot.length)
+    }
+
+    method <- match.arg(method)
+    comms <- x@metadata$comms
+    if (is.null(comms)) {
+        return(.pd(extractTree(x), method))
+    }
+    subtrees <- x@subtrees[as.character(comms)]
+    res <- sapply(subtrees, .pd, method)[as.character(comms)]
+    names(res) <- names(comms)
+    return(res)
+
+})
 
 # lookup function for minimum tip length
 getMinTL <- function(tree, genera) {

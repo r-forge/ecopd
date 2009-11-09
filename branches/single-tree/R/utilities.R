@@ -105,6 +105,11 @@ genera <- function(phy) {
   gsub("_.*$", "", tipLabels(phy))
 }
 
+# community labels extractor
+communities <- function(phy) {
+  names(phy@metadata$comms)
+}
+
 ## this works as implementation of dist.nodes for phylo4 objects, albeit
 ## about 1.5x slower than dist.nodes
 pairdist <- function(phy, type=c("all", "tip"), use.labels=FALSE) {

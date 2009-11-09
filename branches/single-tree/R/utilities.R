@@ -70,6 +70,14 @@ abundance <- function(phy, comm) {
   return(phy)
 }
 
+presence <- function(phy) {
+    N <- abundance(phy)
+    N[N > 0] <- 1
+    N[N <= 0] <- 0
+    N[is.na(N)] <- 0
+    N
+}
+
 # minTL extractor
 minTL <- function(phy) {
   minTL <- tipData(phy)$minTL

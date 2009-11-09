@@ -1,19 +1,3 @@
-PAE <- function(tree) {
-
-  # Calculate PD
-  PD <- pd(tree)
-
-  # Extract tip lengths and abundances of those taxa
-  TL <- tipLength(tree)
-  N <- abundance(tree)
-
-  # Calculate PAE
-  numer <- PD + sum(TL * (N-1))
-  denom <- PD + (mean(N)-1) * sum(TL)
-  return(numer/denom)
-
-}
-
 IAC <- function(tree) {
 
   # Count number of lineages originating at each internal node (i.e.

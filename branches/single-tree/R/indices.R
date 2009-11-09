@@ -1,28 +1,3 @@
-IAC <- function(tree) {
-
-  # Count number of lineages originating at each internal node (i.e.
-  # number of splits)
-  int.nodes <- nodeId(tree, "internal")
-  nSplits <- sapply(int.nodes, function(x) length(children(tree, x)))
-  names(nSplits) <- int.nodes
-
-  # For each tip, take the product of the number of splits across all of
-  # its ancestral nodes
-  denom <- sapply(ancestors(tree, nodeId(tree, "tip")), function(x)
-    prod(nSplits[as.character(x)]))
-
-  abundance <- abundance(tree)
-
-  # Calculate expected number of individuals under null hypothesis of
-  # equal allocation to each lineage at each (node) split 
-  expected <- sum(abundance) / denom
-
-  # IAC: summed absolute difference between expected and observed
-  # abundances, divide by number of nodes
-  sum(abs(expected-abundance)) / nNodes(tree)
-
-}
-
 # TODO: This function includes its own code for not counting root edge
 # length. Maybe this should maybe be done at a higher level?
 ED <- function(tree) {

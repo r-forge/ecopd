@@ -45,16 +45,28 @@ tipLength <- function(phy, from=c("parent", "root")) {
 }
 
 # abundance extractor
-abundance <- function(phy) {
-  abund <- tipData(phy)$abundance
-  if (is.null(abund)) abund <- rep(NA_real_, nTips(phy))
-  names(abund) <- row.names(tipData(phy))
-  return(abund)
+abundance <- function(phy, comm) {
+  communities <- names(phy@metadata$comms)
+  if (missing(comm)) {
+    return(tipData(phy)[communities])
+  }
+  doNotExist <- !comm %in% communities
+  if (any(doNotExist)) {
+    stop("one or more communities not found in phy: ",
+      paste(comm[doNotExist], collapse=", "))
+  }
+  return(tipData(phy)[comm])
 }
 
 # abundance assignment function
-`abundance<-` <- function(phy, value) {
-  tipData(phy)$abundance <- value
+`abundance<-` <- function(phy, comm, tip, value) {
+  if (!is.atomic(comm) || length(comm)!=1) {
+    stop("comm must be a vector of length 1")
+  } else if (!comm %in% names(phy@metadata$comms)) {
+    stop(paste("community", comm, "not found in phy", sep=" "))
+  }
+  if (missing(tip)) tip <- tipLabels(phy)
+  tipData(phy)[tip, comm] <- value
   return(phy)
 }
 
@@ -84,7 +96,6 @@ genera <- function(phy) {
   #From taxa names in tree, remove "_" and species name after
   gsub("_.*$", "", tipLabels(phy))
 }
-
 
 ## this works as implementation of dist.nodes for phylo4 objects, albeit
 ## about 1.5x slower than dist.nodes

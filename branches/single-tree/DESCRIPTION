@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2008-09-03
 Author: Jim Regetz, Marc Cadotte, Jonathan Davies
 Maintainer: Jim Regetz <regetz@nceas.ucsb.edu>
-Depends: ape, phylobase
+Depends: methods, phylobase
 Description: A set of metrics and functions for combining ecological and phylogenetic information
 License: GPL
 Collate: phylo4com.R utilities.R community.R pd.R ed.R iac.R pae.R simpson.R indices.R plots.R

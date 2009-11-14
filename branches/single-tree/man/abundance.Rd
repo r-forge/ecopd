@@ -7,8 +7,8 @@ Functions to get or set the abundances of tip taxa in a phylogenetic
 tree.
 }
 \usage{
-  abundance(phy, comm, tip, na.zero=TRUE)
-  presence(phy, comm, tip, na.zero=TRUE)
+  abundance(phy, comm, tip, na.zero=FALSE)
+  presence(phy, comm, tip, na.zero=FALSE)
   abundance(phy, comm, tip) <- value
 }
 \arguments{
@@ -51,7 +51,7 @@ tree.
 
   ## abundance replacement
   abundance(weeds, "A", "Centaurea_alba") <- NA
-  abundance(weeds, "B", 2:5) <- c(0, 100, 0)
+  abundance(weeds, "B", 2:4) <- c(0, 100, 0)
   abundance(weeds, "C") <- 25
 
   presence(weeds, na.zero=TRUE)

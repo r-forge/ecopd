@@ -45,7 +45,7 @@ tipLength <- function(phy, from=c("parent", "root")) {
 }
 
 # abundance extractor
-abundance <- function(phy, comm, tip) {
+abundance <- function(phy, comm, tip, na.zero=FALSE) {
     communities <- names(phy@metadata$comms)
     if (missing(comm)) {
         comm <- communities
@@ -61,7 +61,9 @@ abundance <- function(phy, comm, tip) {
         tip <- getNode(phy, tip, type="tip", missing="warn")
         tip <- names(tip)[!is.na(tip)]
     }
-    return(tipData(phy)[tip, comm, drop=FALSE])
+    N <- tipData(phy)[tip, comm, drop=FALSE]
+    if (na.zero) N[is.na(N)] <- 0
+    return(N)
 }
 
 # abundance assignment function
@@ -81,10 +83,9 @@ abundance <- function(phy, comm, tip) {
 }
 
 presence <- function(phy, comm, tip, na.zero=FALSE) {
-    N <- abundance(phy, comm, tip)
+    N <- abundance(phy, comm, tip, na.zero=na.zero)
     N[N > 0] <- 1
     N[N <= 0] <- 0
-    if (na.zero) N[is.na(N)] <- 0
     N
 }
 

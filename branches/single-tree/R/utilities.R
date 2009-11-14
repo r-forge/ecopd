@@ -45,36 +45,46 @@ tipLength <- function(phy, from=c("parent", "root")) {
 }
 
 # abundance extractor
-abundance <- function(phy, comm) {
-  communities <- names(phy@metadata$comms)
-  if (missing(comm)) {
-    return(tipData(phy)[communities])
-  }
-  doNotExist <- !comm %in% communities
-  if (any(doNotExist)) {
-    stop("one or more communities not found in phy: ",
-      paste(comm[doNotExist], collapse=", "))
-  }
-  return(tipData(phy)[comm])
+abundance <- function(phy, comm, tip) {
+    communities <- names(phy@metadata$comms)
+    if (missing(comm)) {
+        comm <- communities
+    }
+    doNotExist <- !comm %in% communities
+    if (any(doNotExist)) {
+        stop("one or more communities not found in phy: ",
+            paste(comm[doNotExist], collapse=", "))
+    }
+    if (missing(tip)) {
+        tip <- tipLabels(phy)
+    } else {
+        tip <- getNode(phy, tip, type="tip", missing="warn")
+        tip <- names(tip)[!is.na(tip)]
+    }
+    return(tipData(phy)[tip, comm, drop=FALSE])
 }
 
 # abundance assignment function
 `abundance<-` <- function(phy, comm, tip, value) {
-  if (!is.atomic(comm) || length(comm)!=1) {
-    stop("comm must be a vector of length 1")
-  } else if (!comm %in% names(phy@metadata$comms)) {
-    stop(paste("community", comm, "not found in phy", sep=" "))
-  }
-  if (missing(tip)) tip <- tipLabels(phy)
-  tipData(phy)[tip, comm] <- value
-  return(phy)
+    if (!is.atomic(comm) || length(comm)!=1) {
+        stop("when replacing, comm must be a vector of length 1")
+    } else if (!comm %in% names(phy@metadata$comms)) {
+        stop(paste("community", comm, "not found in phy", sep=" "))
+    }
+    if (missing(tip)) {
+        tip <- tipLabels(phy)
+    } else {
+        tip <- names(getNode(phy, tip, type="tip", missing="fail"))
+    }
+    tipData(phy)[tip, comm] <- value
+    return(phy)
 }
 
-presence <- function(phy) {
-    N <- abundance(phy)
+presence <- function(phy, comm, tip, na.zero=FALSE) {
+    N <- abundance(phy, comm, tip)
     N[N > 0] <- 1
     N[N <= 0] <- 0
-    N[is.na(N)] <- 0
+    if (na.zero) N[is.na(N)] <- 0
     N
 }
 

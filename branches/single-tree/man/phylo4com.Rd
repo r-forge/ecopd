@@ -1,24 +1,58 @@
-\name{ecophylo}
+\name{phylo4com}
+\docType{methods}
 \alias{phylo4com}
-\title{Create list of community phylogenies}
+\alias{phylo4com-methods}
+\alias{phylo4com,phylo4,numeric-method}
+\alias{phylo4com,phylo4,matrix-method}
+\alias{phylo4com,phylo4,data.frame-method}
+\alias{phylo4com,phylo4d,missing-method}
+\alias{phylo4com,phylo,ANY-method}
+\title{Create community phylogenies object}
 \description{
   Function to combine species abundance data with phylogenetic
   information for a set of communities.
 }
+\section{Methods}{
+  \describe{
+    \item{x = "phylo4", n = "numeric"}{creates community phylogenies
+      from a master \code{phylo4} tree, a vector of abundances, a vector
+      of corresponding community names/labels, and a vector of
+      corresponding taxa names/labels}
+    \item{x = "phylo4", n = "matrix"}{creates community phylogenies
+      from a master \code{phylo4} tree and a site-by-species abundance
+      matrix.}
+    \item{x = "phylo4", n = "data.frame"}{creates community phylogenies
+      from a master \code{phylo4} tree and a site-by-species abundance
+      data.frame}
+    \item{x = "phylo", n = "ANY"}{creates a phylobase tree from an
+      object of class \code{phylo}}
+  }
+}
 \usage{
-  phylo4com(communityID, species, abundance, tree,
+  \S4method{phylo4com}{phylo4,numeric}(x, n, communityID, species,
     missing=c("warn", "OK", "fail"))
+  \S4method{phylo4com}{phylo4,matrix}(x, n, missing=c("warn", "OK", "fail"))
+  \S4method{phylo4com}{phylo4,data.frame}(x, n, missing=c("warn", "OK", "fail"))
+  \S4method{phylo4com}{phylo4d,missing}(x, n, cols)
+  \S4method{phylo4com}{phylo,ANY}(x, n, \dots, check.node.labels = "keep")
 }
 \arguments{
-  \item{communityID}{Vector of community identifiers.}
-  \item{species}{Vector of species names; must correspond to tip labels
-    of the supplied tree.}
-  \item{abundance}{Numeric vector of abundances of each species in each
-    community.}
-  \item{tree}{A \code{phylo4} object (or one that inherits from it).}
+  \item{x}{a phylogeny of class \code{phylo4d}, \code{phylo4}, or
+    \code{phylo}}
+  \item{n}{Vector of abundances of each species in each community, or
+    abundance matrix with species as rows and sites as columns.}
+  \item{communityID}{Vector of community labels corresponding to
+    the abundance values (only used if \code{n} is a vector).}
+  \item{species}{Vector of species labels corresponding to
+    the abundance values (only used if \code{n} is a vector).}
+  \item{cols}{Names of pre-existing phylo4d data columns to use as
+    abundance data (only if \code{n} is missing)}
+  \item{check.node.labels}{If x is a phylo object, what to do with node
+    labels}
   \item{missing}{(not currently implemented) What to do if some
     requested node IDs or names are not in the tree: warn, do nothing,
     or stop with an error.}
+  \item{\dots}{additional arguments to be passed to other methods}
 }
 \details{
   TODO
@@ -30,17 +64,16 @@
   works; see the help page for this method for more information.
 }
 \value{
-  A list of \code{phylo4d} objects, one per unique value in the
-  \code{communityID} vector. List element names are taken from the
-  \code{communityID} vector.
+  A \code{phylo4com} objects.
 }
 \author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \seealso{
-  \code{\link[phylobase]{subset}} in the phylobase package
+  \code{\link[phylobase:subset-methods]{subset}} in the phylobase package
 }
 \examples{
-  ##TODO -- contruction example
-  # Example of a phylo4com result
-  data(weeds)
-  print(weeds)
+  # Example of phylo4com construction
+  data(weeds.data)
+  data(weeds.tree)
+  phylo4com(weeds.tree, weeds.data$cover, weeds.data$plot,
+    weeds.data$taxa)
 }

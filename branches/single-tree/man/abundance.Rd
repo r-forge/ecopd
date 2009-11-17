@@ -1,6 +1,7 @@
 \name{abundance}
 \alias{abundance}
 \alias{abundance<-}
+\alias{presence}
 \title{Get or set species abundances}
 \description{
 Functions to get or set the abundances of tip taxa in a phylogenetic

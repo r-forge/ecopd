@@ -77,3 +77,4 @@
   phylo4com(weeds.tree, weeds.data$cover, weeds.data$plot,
     weeds.data$taxa)
 }
+\keyword{methods}

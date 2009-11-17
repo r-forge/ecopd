@@ -1,7 +1,6 @@
 \name{phylo4com-class}
 \docType{class}
 \alias{phylo4com-class}
-
 \title{phylo4com class}
 \description{S4 class for community phylogenies.}
 \section{Objects from the Class}{
@@ -25,6 +24,10 @@
     \item{\code{metadata}:}{metadata for node/tip data (currently
       used to store some community information)}
   }
+}
+\section{Extends}{
+  Class \code{"phylo4d"} directly;
+  Class \code{"phylo4"}, by class \code{"phylo4d"}.
 }
 \author{Jim Regetz}
 \examples{

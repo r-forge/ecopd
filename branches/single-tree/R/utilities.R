@@ -110,10 +110,23 @@ minTL <- function(phy) {
   return(phy)
 }
 
+##TODO method-ize this, adding method for phylo4, then calling that
+##method from this more complex phylo4com method
 # genera extractor
-genera <- function(phy) {
-  #From taxa names in tree, remove "_" and species name after
-  gsub("_.*$", "", tipLabels(phy))
+genera <- function(phy, comm) {
+    if (missing(comm)) {
+        comm <- communities(phy)
+    }
+    doNotExist <- !comm %in% communities(phy)
+    if (any(doNotExist)) {
+        stop("one or more communities not found in phy: ",
+            paste(comm[doNotExist], collapse=", "))
+    }
+    # From taxa names in tree, remove "_" and species name after
+    g <- lapply(phy@subtrees[phy@metadata$comms[comm]], function(x)
+        gsub("_.*$", "", tipLabels(x)))
+    names(g) <- comm
+    return(g)
 }
 
 # community labels extractor

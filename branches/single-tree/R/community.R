@@ -21,8 +21,3 @@ siteBySpecies <- function(phylo4com, presence.only=FALSE,
   return(mat)
 
 }
-
-# Calculate species richness
-richness <- function(phylo4com, na.rm=FALSE) {
-  sapply(phylo4com, function(x) sum(abundance(x)>0, na.rm=na.rm))
-}

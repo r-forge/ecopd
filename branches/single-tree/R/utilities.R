@@ -89,6 +89,11 @@ presence <- function(phy, comm, tip, na.zero=FALSE) {
     N
 }
 
+richness <- function(phy, comm, na.zero=FALSE) {
+    P <- presence(phy, comm, na.zero=na.zero)
+    colSums(P)
+}
+
 # minTL extractor
 minTL <- function(phy) {
   minTL <- tipData(phy)$minTL

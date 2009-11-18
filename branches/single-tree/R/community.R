@@ -1,23 +1,14 @@
 # Generate site-by-species matrix
-siteBySpecies <- function(phylo4com, presence.only=FALSE,
-  transpose=FALSE) {
+siteBySpecies <- function(phy, presence.only=FALSE,
+    na.zero=FALSE, transpose=FALSE) {
 
-  ## create and populate the matrix
-  spp <- unique(unlist(lapply(phylo4com, tipLabels)))
-  mat <- sapply(phylo4com, function(x) {
-    vec <- tipData(x)[spp, "abundance"]
-    vec[!spp %in% tipLabels(x)] <- 0
-    vec
-  })
-  rownames(mat) <- spp
-
-  if (presence.only) {
-    mat[mat>0] <- 1
-    mat[mat<=0] <- 0
-  }
-
-  if (!transpose) mat <- t(mat)
-
-  return(mat)
+    if (presence.only) {
+        dat <- presence(phy, na.zero=na.zero)
+    } else {
+        dat <- abundance(phy, na.zero=na.zero)
+    }
+    mat <- as.matrix(dat)
+    if (!transpose) mat <- t(mat)
+    return(mat)
 
 }

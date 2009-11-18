@@ -77,7 +77,7 @@ setMethod("eed", signature(x="phylo4com"), function(x, na.rm=TRUE) {
         stop("no community data specified in phylo4com object")
     }
     subtrees <- x@subtrees[unique(as.character(comms))]
-    hed(x) / sapply(subtrees, nTips)[as.character(comms)]
+    hed(x) / log(sapply(subtrees, nTips)[as.character(comms)])
 })
 
 setGeneric("aed", function(x, na.rm=TRUE) {

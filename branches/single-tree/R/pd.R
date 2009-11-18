@@ -30,33 +30,22 @@ setMethod("pd", signature(x="phylo4com"), function(x,
 
     method <- match.arg(method)
 
-    ##TODO fix abundance-weighted PD!
     if (method %in% c("polytomy", "yule")) {
-        stop("Non-trad PD not yet implemented for phylo4com")
-    } 
-
-    .pd <- function(phy, method) {
-        ## if using non-traditional pd, adjust tip lengths based on abundance
-        if (method %in% c("polytomy", "yule")) {
-            phy <- weightByAbund(phy, method)
-        } 
-        # exclude root edge from calculation (if it exists)
-        if (isRooted(phy)) {
-            nonroot.nodes <- setdiff(nodeId(phy), rootNode(phy))
-            tot.length <- sum(edgeLength(phy, nonroot.nodes))
-        } else {
-            tot.length <- sum(edgeLength(phy))
+        message("estimating minTL values from Supertree")
+        res <- sapply(communities(x), function(community) {
+            phyd <- phylo4d(x, community)
+            n <- tipData(phyd)[[community]]
+            pd(extractTree(weightByAbund(phyd, n, method)))
+        })
+    } else if (method == "traditional") {
+        comms <- x@metadata$comms
+        if (is.null(comms)) {
+            return(.pd(extractTree(x), method))
         }
-        return(tot.length)
+        subtrees <- x@subtrees[as.character(comms)]
+        res <- sapply(subtrees, pd)[as.character(comms)]
+        names(res) <- names(comms)
     }
-
-    comms <- x@metadata$comms
-    if (is.null(comms)) {
-        return(.pd(extractTree(x), method))
-    }
-    subtrees <- x@subtrees[as.character(comms)]
-    res <- sapply(subtrees, .pd, method)[as.character(comms)]
-    names(res) <- names(comms)
     return(res)
 
 })
@@ -120,26 +109,17 @@ getMinTL <- function(tree, genera) {
 }
 
 # function to weight tip length based on abundance
-weightByAbund <- function(tree, method=c("polytomy", "yule")) {
+weightByAbund <- function(tree, n, method=c("polytomy", "yule")) {
 
   method <- match.arg(method)
 
-  if (is.null(abundance(tree))) {
-    stop("tree contains no abundance information")
-  }
-
   if (is.null(minTL(tree))) {
-    stop("tree contains no minTL information")
+    minLength <- getMinTL(tree, genera(tree))
+  } else {
+    minLength <- minTL(tree)
   }
 
-  n <- abundance(tree)
-  minLength <- minTL(tree)
   tipLen <- tipLength(tree)
- 
-  # Test statement:
-  if (!identical(names(n), names(minLength))) {
-    stop("mismatch between abundance and minTL vectors")
-  }
 
   if (method=="polytomy") {
     newLength <- tipLen + (n-1) * minLength

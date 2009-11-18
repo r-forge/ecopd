@@ -34,8 +34,6 @@ export(siteBySpecies)
 # pd-related functions
 export(minTL)
 export(`minTL<-`)
-export(getMinTL)
-export(weightByAbund)
 
 # miscellaneous
 export(caterpillar)
@@ -46,3 +44,8 @@ export(LookupTL)
 export(Supertree)
 
 #----------------------------------------------------------------------
+
+# unexported functions
+#export(getSubtrees)
+#export(getMinTL)
+#export(weightByAbund)

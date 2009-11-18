@@ -1,5 +1,7 @@
 \name{weeds}
 \alias{weeds}
+\alias{weeds.data}
+\alias{weeds.tree}
 \docType{data}
 \title{Weed phylogeny and community data}
 \description{
@@ -7,7 +9,14 @@
   occurring in three hypothetical plots.
 }
 \format{
-  A list \code{phylo4d} objects, each with abundance data for tip taxa.
+  \describe{
+    \item{\code{weeds.data}:}{data frame with one column each for
+      plot name, species name, and observed cover}
+    \item{\code{weeds.tree}:}{phylo4 tree for all five species included
+      in the community dataset}
+    \item{\code{weeds}:}{phylo4com object representing the combined
+      phylogeny and community data}
+  }
 }
 \details{
   This data set includes five weedy annual plant species commonly found

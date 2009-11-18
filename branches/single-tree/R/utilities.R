@@ -111,8 +111,8 @@ minTL <- function(phy) {
 }
 
 # community labels extractor
-communities <- function(phy) {
-  names(phy@metadata$comms)
+communities <- function(x) {
+  names(x@metadata$comms)
 }
 
 ## this works as implementation of dist.nodes for phylo4 objects, albeit

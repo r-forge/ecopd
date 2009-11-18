@@ -6,6 +6,19 @@ setGeneric("pd", function(x, ...) {
     standardGeneric("pd")
 })
 
+setMethod("pd", signature(x="phylo4"),
+  function(x, method=c("traditional")) {
+    method <- match.arg(method)
+    if (isRooted(x)) {
+        nonroot.nodes <- setdiff(nodeId(x), rootNode(x))
+        tot.length <- sum(edgeLength(x, nonroot.nodes))
+    } else {
+        tot.length <- sum(edgeLength(x))
+    }
+    return(tot.length)
+  }
+)
+
 setMethod("pd", signature(x="phylo4d"), function(x,
   method=c("traditional", "polytomy", "yule"), ...) {
     phyc <- phylo4com(x, ...)

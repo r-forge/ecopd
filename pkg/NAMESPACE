@@ -1,35 +1,51 @@
-export(tipLength)
-export(pairdist)
-export(abundance)
-export(`abundance<-`)
-export(minTL)
-export(`minTL<-`)
-
-export(caterpillar)
-export(genera)
-export(getMinTL)
-export(pd)
-export(richness)
-export(simp.phy)
-export(siteBySpecies)
-export(weightByAbund)
-
-export(Families)
-export(LookupTL)
-export(Supertree)
-
-export(phylo4com)
-export(pd)
-export(PAE)
-export(IAC)
-export(ED)
-export(EED)
-export(HED)
-export(AED)
-export(EAED)
-export(HAED)
-export(value)
+#----------------------------------------------------------------------
 
 #importMethodsFrom(phylobase, subset)
 #importMethodsFrom(phylobase, labels)
 import(phylobase)
+
+#----------------------------------------------------------------------
+
+exportClasses(phylo4com)
+
+#----------------------------------------------------------------------
+
+# constructor methods
+exportMethods(phylo4com)
+
+# metric methods
+exportMethods(pd, pae, iac, ed, eed, hed, aed, eaed, haed, value)
+exportMethods(simpson)
+
+#----------------------------------------------------------------------
+
+# phylogeny helper functions
+export(tipLength)
+export(pairdist)
+
+# community helper functions
+export(abundance, "abundance<-")
+export(presence)
+export(communities)
+export(genera)
+export(richness)
+export(siteBySpecies)
+
+# pd-related functions
+export(minTL)
+export(`minTL<-`)
+
+# miscellaneous
+export(caterpillar)
+
+# reference data sets
+export(Families)
+export(LookupTL)
+export(Supertree)
+
+#----------------------------------------------------------------------
+
+# unexported functions
+#export(getSubtrees)
+#export(getMinTL)
+#export(weightByAbund)

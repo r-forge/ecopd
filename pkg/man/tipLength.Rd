@@ -37,12 +37,12 @@
 }
 \examples{
   data(weeds)
-  tipLength(weeds$A)
+  tipLength(weeds)
 
   # distance from the root node to each tip
-  tipLength(weeds$A, from="root")
+  tipLength(weeds, from="root")
 
   # as above, but include root edge length
-  tipLength(weeds$A, from="root") + edgeLength(weeds$A,
-    rootNode(weeds$A))
+  tipLength(weeds, from="root") + edgeLength(weeds,
+    rootNode(weeds))
 }

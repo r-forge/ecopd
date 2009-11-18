@@ -45,17 +45,53 @@ tipLength <- function(phy, from=c("parent", "root")) {
 }
 
 # abundance extractor
-abundance <- function(phy) {
-  abund <- tipData(phy)$abundance
-  if (is.null(abund)) abund <- rep(NA_real_, nTips(phy))
-  names(abund) <- row.names(tipData(phy))
-  return(abund)
+abundance <- function(phy, comm, tip, na.zero=FALSE) {
+    communities <- names(phy@metadata$comms)
+    if (missing(comm)) {
+        comm <- communities
+    }
+    doNotExist <- !comm %in% communities
+    if (any(doNotExist)) {
+        stop("one or more communities not found in phy: ",
+            paste(comm[doNotExist], collapse=", "))
+    }
+    if (missing(tip)) {
+        tip <- tipLabels(phy)
+    } else {
+        tip <- getNode(phy, tip, type="tip", missing="warn")
+        tip <- names(tip)[!is.na(tip)]
+    }
+    N <- tipData(phy)[tip, comm, drop=FALSE]
+    if (na.zero) N[is.na(N)] <- 0
+    return(N)
 }
 
 # abundance assignment function
-`abundance<-` <- function(phy, value) {
-  tipData(phy)$abundance <- value
-  return(phy)
+`abundance<-` <- function(phy, comm, tip, value) {
+    if (!is.atomic(comm) || length(comm)!=1) {
+        stop("when replacing, comm must be a vector of length 1")
+    } else if (!comm %in% names(phy@metadata$comms)) {
+        stop(paste("community", comm, "not found in phy", sep=" "))
+    }
+    if (missing(tip)) {
+        tip <- tipLabels(phy)
+    } else {
+        tip <- names(getNode(phy, tip, type="tip", missing="fail"))
+    }
+    tipData(phy)[tip, comm] <- value
+    return(phy)
+}
+
+presence <- function(phy, comm, tip, na.zero=FALSE) {
+    N <- abundance(phy, comm, tip, na.zero=na.zero)
+    N[N > 0] <- 1
+    N[N <= 0] <- 0
+    N
+}
+
+richness <- function(phy, comm, na.zero=FALSE) {
+    P <- presence(phy, comm, na.zero=na.zero)
+    colSums(P)
 }
 
 # minTL extractor
@@ -79,12 +115,10 @@ minTL <- function(phy) {
   return(phy)
 }
 
-# genera extractor
-genera <- function(phy) {
-  #From taxa names in tree, remove "_" and species name after
-  gsub("_.*$", "", tipLabels(phy))
+# community labels extractor
+communities <- function(x) {
+  names(x@metadata$comms)
 }
-
 
 ## this works as implementation of dist.nodes for phylo4 objects, albeit
 ## about 1.5x slower than dist.nodes

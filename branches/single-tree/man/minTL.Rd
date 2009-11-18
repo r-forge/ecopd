@@ -19,6 +19,9 @@
 \details{
   TODO
 }
+\note{
+  This function isn't currently useful for much of anything.
+}
 \value{
   For \code{minTL}, a named numeric vector of the same length as tips of
   tree. (\code{NULL} is returned if the tree has no assigned minTL
@@ -26,6 +29,7 @@
 }
 \author{Jim Regetz (regetz@nceas.ucsb.edu)}
 \examples{
-  data(weeds)
-  minTL(weeds$A)
+  phy <- phylo4d(weeds, "A")
+  minTL(phy) <- 1:5
+  minTL(phy)
 }

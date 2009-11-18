@@ -29,11 +29,9 @@
   which \code{pairdist} is based.
 }
 \examples{
-  data(weeds)
-
   # all pairwise distances
-  pairdist(weeds$A)
+  pairdist(weeds)
 
   # pairwise distances between tips, with labels and dim names
-  pairdist(weeds$A, type="tip", use.labels=TRUE)
+  pairdist(weeds, type="tip", use.labels=TRUE)
 }

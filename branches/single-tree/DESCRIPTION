@@ -8,6 +8,6 @@ Maintainer: Jim Regetz <regetz@nceas.ucsb.edu>
 Depends: methods, phylobase
 Description: A set of metrics and functions for combining ecological and phylogenetic information
 License: GPL
-Collate: phylo4com.R coerce.R utilities.R community.R pd.R aed.R iac.R pae.R simpson.R indices.R plots.R
+Collate: phylo4com.R coerce.R genera.R utilities.R community.R pd.R aed.R iac.R pae.R simpson.R indices.R plots.R
 LazyLoad: yes
 LazyData: yes

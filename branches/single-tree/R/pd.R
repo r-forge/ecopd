@@ -28,11 +28,17 @@ setMethod("pd", signature(x="phylo4d"), function(x,
 setMethod("pd", signature(x="phylo4com"), function(x,
   method=c("traditional", "polytomy", "yule")) {
 
+    method <- match.arg(method)
+
+    ##TODO fix abundance-weighted PD!
+    if (method %in% c("polytomy", "yule")) {
+        stop("Non-trad PD not yet implemented for phylo4com")
+    } 
+
     .pd <- function(phy, method) {
         ## if using non-traditional pd, adjust tip lengths based on abundance
         if (method %in% c("polytomy", "yule")) {
-            stop("Non-trad PD not yet implemented for phylo4com")
-#            phy <- weightByAbund(phy, method)
+            phy <- weightByAbund(phy, method)
         } 
         # exclude root edge from calculation (if it exists)
         if (isRooted(phy)) {
@@ -44,7 +50,6 @@ setMethod("pd", signature(x="phylo4com"), function(x,
         return(tot.length)
     }
 
-    method <- match.arg(method)
     comms <- x@metadata$comms
     if (is.null(comms)) {
         return(.pd(extractTree(x), method))

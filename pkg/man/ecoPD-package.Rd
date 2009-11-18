@@ -13,8 +13,8 @@ for combining ecological and phylogenetic information.
 \tabular{ll}{
 Package: \tab ecoPD\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2008-09-03\cr
+Version: \tab 0.2\cr
+Date: \tab 2009-11-18\cr
 License: \tab GPL\cr
 LazyLoad: \tab yes\cr
 LazyData: \tab yes\cr

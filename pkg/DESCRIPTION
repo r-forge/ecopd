@@ -1,8 +1,8 @@
 Package: ecoPD
 Type: Package
 Title: Ecologically-informed phylodiversity metrics
-Version: 0.1
-Date: 2008-09-03
+Version: 0.2
+Date: 2009-11-18
 Author: Jim Regetz, Marc Cadotte, Jonathan Davies
 Maintainer: Jim Regetz <regetz@nceas.ucsb.edu>
 Depends: methods, phylobase

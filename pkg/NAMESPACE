@@ -15,7 +15,7 @@ exportMethods(phylo4com)
 
 # metric methods
 exportMethods(pd, pae, iac, ed, eed, hed, aed, eaed, haed, value)
-exportMethods(simpson)
+exportMethods(shannon, simpson)
 
 #----------------------------------------------------------------------
 
